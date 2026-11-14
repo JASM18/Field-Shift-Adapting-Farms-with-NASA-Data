@@ -55,3 +55,25 @@ Aclaraciones:
 
 Primera propuesta (descartada): “Con temperaturas cada vez más altas, ¿qué orden de cultivos evita
 que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
+
+## Datasets
+
+### NASA POWER ✅ (calor y sequía)
+
+- **Qué es:** el clima de cualquier punto del planeta, día por día, desde 1981, a partir de satélites
+  y modelos de la NASA.
+- **Datos útiles:** temperatura (media, máxima, mínima), lluvia, humedad del suelo en la zona de
+  raíces, días con helada, radiación solar, humedad del aire.
+- **Ventajas:** gratis, sin cuenta, global, fácil de usar (se consulta por coordenadas).
+- **Limitación:** cada dato cubre una zona de unos 50 × 50 km, no la parcela exacta.
+- **Responde a:** ¿qué sembrar? (qué cultivos aguantan ese calor y esa lluvia) y ¿cuándo? (en qué
+  meses llueve y no hace calor extremo).
+- Explorar a mano: https://power.larc.nasa.gov/data-access-viewer/
+- **Dos formas de obtener los datos:**
+  1. *Página web (Data Access Viewer):* para explorar a mano y descargar CSV/Excel.
+  2. *API (la usará la app):* el programa pide los datos por internet en el momento, sin descargar nada antes.
+     Ejemplo: https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX,PRECTOTCORR&community=AG&latitude=13.51&longitude=2.11&start=20250801&end=20250806&format=JSON
+- **Tipos de consulta:** `climatology` (promedio de varios años por mes), `monthly` (cada mes de cada año),
+  `daily` (cada día), `hourly` (cada hora).
+- **Ojo:** los promedios esconden los años extremos. En Niamey, la lluvia de agosto fue de 379 mm en 2020
+  y de solo 130 mm en 2023. Para sequía y calor extremo importan esos años malos, no solo el promedio.
