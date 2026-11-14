@@ -56,6 +56,12 @@ Aclaraciones:
 Primera propuesta (descartada): “Con temperaturas cada vez más altas, ¿qué orden de cultivos evita
 que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
 
+## Estrategia de datos ✅ (decidida)
+
+- **Hackathon:** usar los datos **más sencillos** (APIs sin cuenta y ligeras): NASA POWER, MODIS (ORNL DAAC),
+  Open-Meteo, SoilGrids.
+- **Si ganamos y el proyecto continúa:** integrar los datos pesados y más detallados (Landsat por parcela, etc.).
+
 ## Pendientes para más adelante
 
 - **Catálogo de cultivos:** qué cultivos incluir y qué datos de cada uno (agua, temperatura, calendario).
