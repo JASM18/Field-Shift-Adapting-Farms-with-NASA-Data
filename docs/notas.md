@@ -207,3 +207,15 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
   27.37 -109.93 location"*. Otras ubicaciones no respondieron. El otro camino es con cuenta y archivos `.h5`.
 - **Descartado:** no hay acceso sencillo para Sonora, y **NASA POWER ya da la humedad del suelo en la zona
   de raíces** (`GWETROOT`), que es la que le importa al cultivo, sin cuenta.
+
+### SRTM (relieve del terreno) — probado ✅, decisión pendiente
+
+- **Qué es:** misión del transbordador Endeavour (año 2000) que midió la **altura del terreno** de casi todo el
+  planeta. Es un dato **fijo**: se tomó una vez y no cambia.
+- **Detalle:** cuadros de 30 m. Con la altura de puntos vecinos se calcula la **pendiente**.
+- **Acceso SIN cuenta:** Open Topo Data (`https://api.opentopodata.org/v1/srtm30m?locations=lat,lon`).
+  Límite del servicio público: 1 consulta por segundo y 1000 al día.
+- **Prueba:** Valle del Yaqui 39-41 m (prácticamente plano); Hermosillo 202 m; sierra (30.3, -109.3) 902 m.
+- **Para qué podría servir:** pendiente → riesgo de erosión (conviene dejar rastrojo o cultivos de cobertura) y
+  terreno muy plano + suelo arcilloso → riesgo de encharcamiento. Se mostraría en "Mi suelo".
+- **Limitación:** en los valles agrícolas de Sonora el terreno es casi plano, así que aporta poco ahí.
