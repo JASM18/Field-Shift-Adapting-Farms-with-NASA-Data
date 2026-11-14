@@ -29,9 +29,26 @@ La app debe ayudar a elegir una buena secuencia según el clima, el suelo y lo q
 4. Definir qué hará la app (qué pregunta y qué responde)
 5. Construirla poco a poco
 
-## Pregunta de investigación (en discusión)
+## Pregunta de investigación ✅ (decidida)
 
-Propuesta del equipo:
+> ¿Cómo pueden los agricultores de regiones con climas extremos decidir qué sembrar, cuándo y cómo
+> rotar sus cultivos, para reducir pérdidas de cosecha y maximizar la calidad de los cultivos?
 
-> “Con temperaturas cada vez más altas, ¿qué orden de cultivos evita que un cultivo retrase la
-> siembra del siguiente y le pegue al rendimiento?”
+Se divide en tres decisiones que la app debe apoyar:
+
+- **¿Qué sembrar?** → cultivos que aguanten el clima de la zona
+- **¿Cuándo sembrar?** → la mejor temporada según lluvia y temperatura
+- **¿Cómo rotar?** → el orden de cultivos que cuide el suelo
+
+Aclaraciones:
+
+- **Alcance global, no solo México** (recomendación de la asesora): si el proyecto gana, debe
+  servir para cualquier parte del mundo. Los datos de la NASA son globales, así que se puede.
+  Para la demo podemos mostrar ejemplos de varias regiones con climas extremos.
+- **"Calidad de los cultivos"** resume una versión anterior de la pregunta: "para reducir pérdidas
+  de cosecha por **sequía y calor extremo** que terminan en **escasez y alza de precios** de los
+  alimentos". Es decir: el enfoque está en la sequía y el calor extremo, y el impacto es la
+  seguridad alimentaria.
+
+Primera propuesta (descartada): “Con temperaturas cada vez más altas, ¿qué orden de cultivos evita
+que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
