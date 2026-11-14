@@ -191,3 +191,11 @@ al día y tener un plan B.
 
 **Hallazgo:** el servicio ORNL DAAC (sin cuenta) también tiene **SMAP** (`SPL3SMP_E`, humedad del suelo, 9 km,
 diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
+
+### GRACE-FO (agua subterránea) ❌ descartado
+
+- Mide el agua de una región "pesándola" con la gravedad (incluye agua subterránea).
+- Datos de ~300 km, mensuales, ~2 meses de retraso, con cuenta y archivos `.nc`.
+- **Descartado (también para la presentación):** el proyecto es para que **cada agricultor decida sobre
+  su parcela**; un dato regional de 300 km no ayuda a esa decisión.
+- **Criterio del equipo:** todo lo que entre al proyecto debe servirle al agricultor para decidir sobre su parcela.
