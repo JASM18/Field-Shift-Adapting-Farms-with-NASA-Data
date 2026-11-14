@@ -87,3 +87,19 @@ que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
 - **Sequías:** 2020 (186 mm) y 2023 (193 mm), la mitad de lo normal.
 - **Calentamiento:** temperatura media de 24.7 °C (2001-2012) → 25.5 °C (2014-2025), +0.8 °C.
   Máximas récord en 2023 (46.0 °C) y 2024 (46.6 °C).
+
+### Hueco de datos y pronósticos (fuera de NASA POWER)
+
+NASA POWER **no tiene pronóstico** y le faltan los últimos ~3 días. Opciones:
+
+| Necesidad | Opción | Notas |
+|---|---|---|
+| Lluvia de los últimos días | **GPM IMERG "Early"** (NASA) | Retraso de ~4 horas; requiere cuenta Earthdata |
+| Pronóstico 1-16 días | **Open-Meteo** (`api.open-meteo.com/v1/forecast`) | Gratis, sin cuenta (uso no comercial). Probado con Sonora ✅ |
+| Pronóstico por temporada (hasta ~6 meses) | **Open-Meteo Seasonal** (modelo ECMWF SEAS5) | Gratis, sin cuenta. Probado ✅ |
+| Alternativa con soporte | **Meteomatics** | Gratis para participantes (Ofertas Globales del correo) |
+| Pronóstico estacional de la NASA | **GEOS-S2S** | Existe, pero son archivos pesados; difícil para un hackathon |
+
+**Idea clave:** para decidir *qué sembrar y cuándo* importa más el **pronóstico por temporada** (meses)
+que el del clima de mañana. El de 16 días sirve para decisiones del día a día (riego, fecha exacta de siembra).
+Space Apps permite usar datos que no son de la NASA, siempre que el proyecto use datos de la NASA.
