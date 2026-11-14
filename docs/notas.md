@@ -221,3 +221,36 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 - **Limitación:** en los valles agrícolas de Sonora el terreno es casi plano, así que aporta poco ahí.
 - **Decisión:** se usa. Es fácil de implementar y no estorba. El servidor lo consulta una vez por parcela y
   lo guarda (el dato no cambia).
+
+### SoilGrids (suelo) ✅ se usa
+
+- **Qué es:** mapa mundial de suelos del ISRIC (centro internacional de suelos, **no es de la NASA**). Estima las
+  propiedades del suelo combinando miles de muestras de laboratorio con datos de satélite.
+- **Detalle:** cuadros de 250 m, por profundidades (0-5, 5-15, 15-30 cm…). Dato **fijo** (no cambia).
+- **Acceso SIN cuenta:** API REST (JSON). Tiene límite de uso (pocas consultas por minuto) → el servidor lo
+  guarda una vez por parcela. No da datos en zonas urbanas.
+- **Prueba, Valle del Yaqui (0-30 cm):**
+
+| Propiedad | Valor | En palabras sencillas |
+|---|---|---|
+| Arcilla / arena / limo | ~29 % / ~46 % / ~25 % | Franco arcillo arenoso |
+| pH | 8.1 – 8.2 | Alcalino (común en Sonora) |
+| Carbono orgánico | 12.5 → 6.5 g/kg | Poca materia orgánica |
+
+- **Para qué en la app:** pantalla "Mi suelo" (tipo de tierra, materia orgánica, ácida/alcalina) y para saber qué
+  cultivos toleran ese suelo y si la rotación debe incluir leguminosas o dejar rastrojo.
+- **Limitación:** es una **estimación**; puede diferir de la parcela real. El agricultor puede corregirlo con su
+  análisis de laboratorio.
+
+## Resultado de la revisión de datasets ✅
+
+| Dataset | Decisión | Para qué |
+|---|---|---|
+| NASA POWER | ✅ Base | Clima histórico, calor, heladas, lluvia, humedad del suelo, agua que pide el cultivo |
+| Open-Meteo | ✅ Se usa | Pronóstico de 16 días y de 6 meses |
+| MODIS (ORNL DAAC) | ✅ Se usa | "Siembras alrededor" (NDVI) |
+| SoilGrids | ✅ Se usa | "Mi suelo" |
+| SRTM | ✅ Se usa (baja prioridad) | Pendiente / erosión / encharcamiento |
+| GPM | 🟡 Opcional | Lluvia más detallada |
+| Landsat | ⏭️ Siguiente fase | NDVI por parcela |
+| ECOSTRESS, GRACE-FO, SMAP | ❌ Descartados | — |
