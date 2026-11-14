@@ -121,3 +121,27 @@ Space Apps permite usar datos que no son de la NASA, siempre que el proyecto use
 - **Por qué importa en Sonora:** las lluvias de verano (monzón) son tormentas muy locales; con cuadros de
   50 km se pueden "perder", con 10 km se ven mejor.
 - **Conclusión:** NASA POWER alcanza para el clima histórico; GPM es una mejora, no algo indispensable.
+
+### MODIS (vegetación / NDVI) 🟡 → probado ✅
+
+- **Qué es:** sensor en los satélites Terra y Aqua. El dato clave es el **NDVI**: qué tan verde está la
+  vegetación (0 = suelo desnudo, ~0.8 = cultivo muy verde y sano).
+- **Detalle:** cuadros de 250 m, una imagen cada 16 días, desde el año 2000. Retraso ~1 mes.
+- **Acceso SIN cuenta:** servicio de la NASA ORNL DAAC (API JSON). Ejemplo:
+  https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude=27.37&longitude=-109.93&band=250m_16_days_NDVI&startDate=A2025049&endDate=A2025049&kmAboveBelow=2&kmLeftRight=2
+  (valores × 0.0001 = NDVI). El servidor es lento: hay que reintentar.
+- **Prueba, Valle del Yaqui, 18 de febrero (pico del trigo), área de ~5 × 5 km:**
+
+| Año | NDVI promedio | Superficie verde |
+|---|---|---|
+| 2019 | 0.80 | 96 % |
+| 2020 | 0.77 | 96 % |
+| 2021 | 0.74 | 89 % |
+| 2022 | 0.78 | 94 % |
+| 2023 | 0.73 | 88 % |
+| 2024 | 0.80 | 97 % |
+| **2025** | **0.29** | **13 %** |
+| 2026 | 0.68 | 79 % |
+
+  En 2025 casi no hubo siembras: coincide con la sequía 2024-2025 y las presas muy bajas.
+- **Para qué en la app:** tarjeta "Siembras alrededor" del Inicio; mostrar el impacto de la sequía.
