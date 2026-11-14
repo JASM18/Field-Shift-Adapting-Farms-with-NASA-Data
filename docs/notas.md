@@ -199,3 +199,11 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 - **Descartado (también para la presentación):** el proyecto es para que **cada agricultor decida sobre
   su parcela**; un dato regional de 300 km no ayuda a esa decisión.
 - **Criterio del equipo:** todo lo que entre al proyecto debe servirle al agricultor para decidir sobre su parcela.
+
+### SMAP (humedad del suelo por satélite) ❌ descartado
+
+- Mide la humedad de los **primeros ~5 cm** del suelo, en cuadros de 9 km, cada 2-3 días, desde 2015.
+- **Prueba (14 nov 2026):** el servicio sin cuenta (ORNL DAAC) respondió *"No SPL3SMP_E data available for
+  27.37 -109.93 location"*. Otras ubicaciones no respondieron. El otro camino es con cuenta y archivos `.h5`.
+- **Descartado:** no hay acceso sencillo para Sonora, y **NASA POWER ya da la humedad del suelo en la zona
+  de raíces** (`GWETROOT`), que es la que le importa al cultivo, sin cuenta.
