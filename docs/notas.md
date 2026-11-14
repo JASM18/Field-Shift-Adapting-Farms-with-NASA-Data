@@ -145,3 +145,19 @@ Space Apps permite usar datos que no son de la NASA, siempre que el proyecto use
 
   En 2025 casi no hubo siembras: coincide con la sequía 2024-2025 y las presas muy bajas.
 - **Para qué en la app:** tarjeta "Siembras alrededor" del Inicio; mostrar el impacto de la sequía.
+
+### Landsat (fotos detalladas) ⚪ extra → disponible ✅
+
+- **Qué es:** satélites Landsat 8 y 9 (NASA + USGS). Fotos donde se distingue **cada parcela**.
+- **Detalle:** cuadros de 30 m (MODIS: 250 m). Combinando Landsat 8 y 9 pasa cada ~8 días. Desde 1972.
+- **Acceso SIN cuenta:** catálogo de Microsoft Planetary Computer (colección `landsat-c2-l2`).
+- **Prueba (Valle del Yaqui, dic 2025 – nov 2026):** al menos 40 imágenes; 25 con menos de 20 % de nubes.
+  En temporada de lluvias hay imágenes inservibles (29 sep 2026: 99.99 % nubes).
+- **Lo difícil:** cada imagen cubre ~185 × 185 km y pesa mucho; para sacar el NDVI de una parcela hay que
+  leer solo un pedazo (librería `rasterio`) y descartar imágenes con nubes.
+- **Para qué en la app:** ver qué tan verde está **la parcela del agricultor** (no solo la zona) y su historial.
+- **Conclusión:** útil pero más trabajo; MODIS ya cubre "Siembras alrededor" a nivel zona.
+
+## Ofertas Globales (patrocinadores)
+
+Decisión del equipo: **no usar las que pidan tarjeta de crédito.**
