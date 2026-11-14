@@ -56,6 +56,11 @@ Aclaraciones:
 Primera propuesta (descartada): “Con temperaturas cada vez más altas, ¿qué orden de cultivos evita
 que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
 
+## Pendientes para más adelante
+
+- **Catálogo de cultivos:** qué cultivos incluir y qué datos de cada uno (agua, temperatura, calendario).
+- **Cómo el programa arma los planes de rotación** (A/B/C) a partir de fuentes como INIFAP.
+
 ## Datasets
 
 ### NASA POWER ✅ (calor y sequía)
@@ -103,3 +108,16 @@ NASA POWER **no tiene pronóstico** y le faltan los últimos ~3 días. Opciones:
 **Idea clave:** para decidir *qué sembrar y cuándo* importa más el **pronóstico por temporada** (meses)
 que el del clima de mañana. El de 16 días sirve para decisiones del día a día (riego, fecha exacta de siembra).
 Space Apps permite usar datos que no son de la NASA, siempre que el proyecto use datos de la NASA.
+
+### GPM (lluvia) 🟡 prioridad media
+
+- **Qué es:** una red de satélites (NASA + Japón) que mide la lluvia en todo el mundo.
+  El producto que nos interesa se llama **IMERG**.
+- **Detalle:** cuadros de ~10 × 10 km (NASA POWER: ~50 × 50 km), cada 30 minutos, desde 1998.
+- **Versiones:** *Early* (~4 horas de retraso), *Late* (~14 horas), *Final* (~3.5 meses, la más precisa).
+- **Acceso:** requiere cuenta de **NASA Earthdata**. No es una API sencilla como NASA POWER: se descargan
+  archivos (HDF5/NetCDF) y se extrae el punto. En Python se usa la librería `earthaccess`.
+- **Para qué en la app:** tarjeta "Lluvia del mes" del Inicio, con más detalle y más reciente.
+- **Por qué importa en Sonora:** las lluvias de verano (monzón) son tormentas muy locales; con cuadros de
+  50 km se pueden "perder", con 10 km se ven mejor.
+- **Conclusión:** NASA POWER alcanza para el clima histórico; GPM es una mejora, no algo indispensable.
