@@ -32,7 +32,10 @@ La app debe ayudar a elegir una buena secuencia según el clima, el suelo y lo q
 ## Pregunta de investigación ✅ (decidida)
 
 > ¿Cómo pueden los agricultores de regiones con climas extremos decidir qué sembrar, cuándo y cómo
-> rotar sus cultivos, para reducir pérdidas de cosecha y maximizar la calidad de los cultivos?
+> rotar sus cultivos para reducir pérdidas de cosecha por sequía y calor extremo?
+
+(Versión anterior: "...para reducir pérdidas de cosecha y maximizar la calidad de los cultivos?".
+Se cambió "calidad" por algo más concreto: sequía y calor extremo.)
 
 Se divide en tres decisiones que la app debe apoyar:
 
