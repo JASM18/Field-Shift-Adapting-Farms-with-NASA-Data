@@ -254,3 +254,34 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 | GPM | 🟡 Opcional | Lluvia más detallada |
 | Landsat | ⏭️ Siguiente fase | NDVI por parcela |
 | ECOSTRESS, GRACE-FO, SMAP | ❌ Descartados | — |
+
+## Catálogo de cultivos (en análisis)
+
+### Criterios para elegir cultivos
+1. **Importantes en Sonora** (verificar con estadísticas de SIAP).
+2. **Anuales** (se siembran y cosechan en un ciclo): son los que se pueden rotar. Los perennes (vid, nogal,
+   espárrago, frutales) se quedan años en la parcela y no entran.
+3. **Variedad de familias**: gramíneas, leguminosas y oleaginosas, para que la rotación tenga opciones.
+4. **Variedad en consumo de agua**: incluir cultivos que aguanten la sequía.
+
+### Propuesta (pendiente de confirmar con el equipo)
+| Cultivo | Familia | Ciclo típico en Sonora | Agua | Papel en la rotación |
+|---|---|---|---|---|
+| Trigo | Gramínea | Otoño-Invierno | Alta | Cultivo principal del sur de Sonora |
+| Maíz | Gramínea | OI y Primavera-Verano | Muy alta | Muy demandante de agua y nitrógeno |
+| Sorgo | Gramínea | Primavera-Verano | Media | Aguanta calor y sequía; grano o forraje |
+| Garbanzo | Leguminosa | Otoño-Invierno | Baja | Deja nitrógeno; se exporta |
+| Frijol | Leguminosa | PV / OI | Media | Deja nitrógeno |
+| Cártamo | Oleaginosa | Otoño-Invierno | Baja | Muy resistente a la sequía |
+| Ajonjolí | Oleaginosa | Primavera-Verano | Baja | Aguanta calor y sequía |
+| Algodón | Malvácea | Primavera-Verano | Alta | Cultivo comercial importante |
+| *Descanso* | — | Cualquiera | Ninguna | Opción válida cuando no hay agua |
+
+Opcionales: canola (OI, estaba en el diseño), papa (OI, mucha agua).
+
+### Fuentes
+- **SIAP** (Servicio de Información Agroalimentaria y Pesquera): qué y cuánto se siembra en Sonora.
+- **INIFAP – Campo Experimental Norman E. Borlaug** (Cd. Obregón): guías técnicas con fechas de siembra y
+  riegos para el sur de Sonora.
+- **FAO-56**: cuánta agua pide cada cultivo en cada etapa.
+- **FAO ECOCROP**: temperaturas y suelos que tolera cada cultivo.
