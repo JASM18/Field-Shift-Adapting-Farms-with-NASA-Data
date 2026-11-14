@@ -168,7 +168,7 @@ Space Apps permite usar datos que no son de la NASA, siempre que el proyecto use
 
 Decisión del equipo: **no usar las que pidan tarjeta de crédito.**
 
-### ECOSTRESS (estrés de las plantas) ⚪ → siguiente fase
+### ECOSTRESS (estrés de las plantas) ❌ descartado para el hackathon
 
 - **Qué es:** sensor en la Estación Espacial Internacional que mide la **temperatura de las plantas**.
   Una planta con sed cierra sus poros, deja de "sudar" y se calienta: así se detecta el estrés por agua.
@@ -181,7 +181,13 @@ Decisión del equipo: **no usar las que pidan tarjeta de crédito.**
   servidor respondió 503 (no disponible); **falta verificar cuántas fechas hay para Sonora**.
 - **Alternativa sencilla:** MODIS tiene evapotranspiración (`MOD16A2GF`, 500 m, cada 8 días, sin huecos)
   en el mismo servicio.
-- **Conclusión:** por los datos irregulares, queda para la **siguiente fase**.
+- **Conclusión:** **descartado** para el hackathon: datos irregulares, la API no respondió y la página web
+  solo da archivos `.nc` para descargar (con aceptación de licencia). Se puede retomar en la siguiente fase.
+
+**Dónde consultamos:** *ORNL DAAC MODIS/VIIRS Web Service* (API REST, responde JSON, sin descargar archivos):
+https://modis.ornl.gov/data/modis_webservice.html · Es distinto de la página web de descarga de ECOSTRESS.
+⚠️ El servidor es lento y a veces se cae (MODIS también viene de ahí): la app debe guardar los datos una vez
+al día y tener un plan B.
 
 **Hallazgo:** el servicio ORNL DAAC (sin cuenta) también tiene **SMAP** (`SPL3SMP_E`, humedad del suelo, 9 km,
 diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
