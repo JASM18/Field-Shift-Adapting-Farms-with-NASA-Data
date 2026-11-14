@@ -264,7 +264,7 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 3. **Variedad de familias**: gramíneas, leguminosas y oleaginosas, para que la rotación tenga opciones.
 4. **Variedad en consumo de agua**: incluir cultivos que aguanten la sequía.
 
-### Propuesta (pendiente de confirmar con el equipo)
+### Lista aprobada por el equipo (falta confirmar con datos de SIAP)
 | Cultivo | Familia | Ciclo típico en Sonora | Agua | Papel en la rotación |
 |---|---|---|---|---|
 | Trigo | Gramínea | Otoño-Invierno | Alta | Cultivo principal del sur de Sonora |
@@ -275,13 +275,25 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 | Cártamo | Oleaginosa | Otoño-Invierno | Baja | Muy resistente a la sequía |
 | Ajonjolí | Oleaginosa | Primavera-Verano | Baja | Aguanta calor y sequía |
 | Algodón | Malvácea | Primavera-Verano | Alta | Cultivo comercial importante |
+| Canola | Oleaginosa (crucífera) | Otoño-Invierno | Media | Alternativa al trigo con menos agua |
+| Papa | Solanácea | Otoño-Invierno | Muy alta | Cultivo comercial; rompe el ciclo de plagas de los cereales |
 | *Descanso* | — | Cualquiera | Ninguna | Opción válida cuando no hay agua |
 
-Opcionales: canola (OI, estaba en el diseño), papa (OI, mucha agua).
+### Fuentes (por investigar: el equipo las consigue y me las pasa como contexto)
+No se pudo descargar nada del SIAP desde aquí (sus servidores no respondieron).
 
-### Fuentes
 - **SIAP** (Servicio de Información Agroalimentaria y Pesquera): qué y cuánto se siembra en Sonora.
 - **INIFAP – Campo Experimental Norman E. Borlaug** (Cd. Obregón): guías técnicas con fechas de siembra y
   riegos para el sur de Sonora.
 - **FAO-56**: cuánta agua pide cada cultivo en cada etapa.
 - **FAO ECOCROP**: temperaturas y suelos que tolera cada cultivo.
+
+### Tareas de investigación
+1. **SIAP – Cierre de la producción agrícola** (nube.siap.gob.mx/cierreagricola): filtrar **Sonora**, últimos
+   2-3 años, **todos los ciclos** (OI, PV, perennes), riego + temporal. Traer: cultivo, ciclo, modalidad,
+   **superficie sembrada**, superficie siniestrada (pérdidas), rendimiento. Exportar a Excel/CSV.
+2. **INIFAP – Campo Experimental Norman E. Borlaug (CENEB)**: guías técnicas del sur de Sonora por cultivo.
+   Traer por cultivo: fechas de siembra, número de riegos / lámina, duración del ciclo, temperaturas críticas,
+   plagas y enfermedades principales.
+3. **FAO-56** ("Evapotranspiración del cultivo"): tabla de coeficientes de cultivo (Kc) y duración de etapas.
+4. **FAO ECOCROP**: rangos de temperatura, pH y lluvia de cada cultivo.
