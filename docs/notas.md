@@ -45,9 +45,9 @@ Se divide en tres decisiones que la app debe apoyar:
 
 Aclaraciones:
 
-- **Alcance global, no solo México** (recomendación de la asesora): si el proyecto gana, debe
-  servir para cualquier parte del mundo. Los datos de la NASA son globales, así que se puede.
-  Para la demo podemos mostrar ejemplos de varias regiones con climas extremos.
+- **Alcance: empezar con Sonora, pero con software escalable** (recomendación de los asesores).
+  La app se prueba y se presenta con datos de Sonora, pero se programa para que funcione en
+  cualquier lugar con solo cambiar la ubicación (los datos de la NASA son globales).
 - **"Calidad de los cultivos"** resume una versión anterior de la pregunta: "para reducir pérdidas
   de cosecha por **sequía y calor extremo** que terminan en **escasez y alza de precios** de los
   alimentos". Es decir: el enfoque está en la sequía y el calor extremo, y el impacto es la
@@ -72,8 +72,18 @@ que un cultivo retrase la siembra del siguiente y le pegue al rendimiento?”
 - **Dos formas de obtener los datos:**
   1. *Página web (Data Access Viewer):* para explorar a mano y descargar CSV/Excel.
   2. *API (la usará la app):* el programa pide los datos por internet en el momento, sin descargar nada antes.
-     Ejemplo: https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX,PRECTOTCORR&community=AG&latitude=13.51&longitude=2.11&start=20250801&end=20250806&format=JSON
+     Ejemplo (Valle del Yaqui, Sonora): https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX,PRECTOTCORR&community=AG&latitude=27.37&longitude=-109.93&start=20261101&end=20261111&format=JSON
+- **Fecha más reciente:** ~3 días de retraso (el 14 nov 2026 había datos hasta el 11 nov). Los días sin
+  datos aún aparecen como `-999`. Los datos de los últimos meses son preliminares.
+- **Ojo:** si la API falla de vez en cuando (respuesta vacía), hay que reintentar; la app debe manejarlo.
 - **Tipos de consulta:** `climatology` (promedio de varios años por mes), `monthly` (cada mes de cada año),
   `daily` (cada día), `hourly` (cada hora).
-- **Ojo:** los promedios esconden los años extremos. En Niamey, la lluvia de agosto fue de 379 mm en 2020
-  y de solo 130 mm en 2023. Para sequía y calor extremo importan esos años malos, no solo el promedio.
+- **Ojo:** los promedios esconden los años extremos. Para sequía y calor extremo importan los años malos.
+
+#### Lo que dice NASA POWER del Valle del Yaqui, Sonora (27.37, -109.93)
+
+- Lluvia promedio: ~394 mm al año; el 75 % cae en julio-septiembre. De marzo a junio casi no llueve.
+- Calor: temperatura media de 31 °C en junio; máximas de más de 43 °C de mayo a septiembre.
+- **Sequías:** 2020 (186 mm) y 2023 (193 mm), la mitad de lo normal.
+- **Calentamiento:** temperatura media de 24.7 °C (2001-2012) → 25.5 °C (2014-2025), +0.8 °C.
+  Máximas récord en 2023 (46.0 °C) y 2024 (46.6 °C).
