@@ -208,7 +208,7 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 - **Descartado:** no hay acceso sencillo para Sonora, y **NASA POWER ya da la humedad del suelo en la zona
   de raíces** (`GWETROOT`), que es la que le importa al cultivo, sin cuenta.
 
-### SRTM (relieve del terreno) — probado ✅, decisión pendiente
+### SRTM (relieve del terreno) ✅ se usa (prioridad baja)
 
 - **Qué es:** misión del transbordador Endeavour (año 2000) que midió la **altura del terreno** de casi todo el
   planeta. Es un dato **fijo**: se tomó una vez y no cambia.
@@ -219,3 +219,5 @@ diario) y **VIIRS** (`VNP13A1`, NDVI, el reemplazo de MODIS).
 - **Para qué podría servir:** pendiente → riesgo de erosión (conviene dejar rastrojo o cultivos de cobertura) y
   terreno muy plano + suelo arcilloso → riesgo de encharcamiento. Se mostraría en "Mi suelo".
 - **Limitación:** en los valles agrícolas de Sonora el terreno es casi plano, así que aporta poco ahí.
+- **Decisión:** se usa. Es fácil de implementar y no estorba. El servidor lo consulta una vez por parcela y
+  lo guarda (el dato no cambia).
