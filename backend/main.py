@@ -124,7 +124,10 @@ def api_asesor_estado():
 def api_asesor(pregunta: PreguntaAsesor, request: Request):
     if not asesor.configurado():
         raise HTTPException(503, asesor.SIN_LLAVE)
-    if not asesor.permitir(request.client.host if request.client else "?"):
+    visitante = (request.headers.get("cf-connecting-ip")
+                 or request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+                 or (request.client.host if request.client else "?"))
+    if not asesor.permitir(visitante):
         raise HTTPException(429, "Llegaste al límite de preguntas por hora. Intenta más tarde.")
     try:
         return asesor.responder([m.model_dump() for m in pregunta.mensajes],

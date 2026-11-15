@@ -53,6 +53,7 @@ export function conservarUbicacionEnEnlaces() {
 
 // Solo en desarrollo: recarga la página sola cuando cambia algún archivo.
 (async function recargaAutomatica() {
+  if (!["localhost", "127.0.0.1"].includes(location.hostname)) return; // solo al programar en tu computadora
   let versionInicial = null;
   setInterval(async () => {
     try {

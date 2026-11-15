@@ -25,6 +25,7 @@ MODELO = "claude-sonnet-5-5"
 MAX_MENSAJES_HISTORIAL = 12      # solo se envían los últimos mensajes de la conversación
 MAX_CARACTERES_MENSAJE = 1000
 LIMITE_POR_HORA = 30             # mensajes por persona (IP) por hora
+LIMITE_DIARIO_TOTAL = 400        # mensajes al día entre TODOS los visitantes (cuida el gasto de la llave)
 
 
 def _cargar_env():
@@ -63,16 +64,23 @@ def cliente():
 
 # ---------- Límite de uso por persona ----------
 _uso = defaultdict(deque)
+_uso_total = deque()
 
 
 def permitir(ip):
+    """False si la persona pasó su límite por hora o si se llegó al tope diario de todo el servidor."""
     ahora = time.time()
+    while _uso_total and ahora - _uso_total[0] > 86_400:
+        _uso_total.popleft()
+    if len(_uso_total) >= LIMITE_DIARIO_TOTAL:
+        return False
     historial = _uso[ip]
     while historial and ahora - historial[0] > 3600:
         historial.popleft()
     if len(historial) >= LIMITE_POR_HORA:
         return False
     historial.append(ahora)
+    _uso_total.append(ahora)
     return True
 
 
