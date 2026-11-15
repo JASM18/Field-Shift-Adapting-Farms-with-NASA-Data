@@ -55,9 +55,10 @@ def resumen_mensual(datos):
         parte_dias_calor = m["dias_calor"] / len(m["maximas"])
         prob_helada = len(m["años_con_helada"]) / total_años
 
-        if maxima < FRESCO_MENOS_DE:
+        # El color se decide con el número redondeado que ve el agricultor (29.6 → 30°)
+        if round(maxima) < FRESCO_MENOS_DE:
             nivel = "fresco"
-        elif maxima < CALUROSO_MENOS_DE:
+        elif round(maxima) < CALUROSO_MENOS_DE:
             nivel = "caluroso"
         else:
             nivel = "muy_caluroso"
