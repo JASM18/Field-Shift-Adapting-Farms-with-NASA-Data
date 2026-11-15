@@ -297,3 +297,80 @@ No se pudo descargar nada del SIAP desde aquí (sus servidores no respondieron).
    plagas y enfermedades principales.
 3. **FAO-56** ("Evapotranspiración del cultivo"): tabla de coeficientes de cultivo (Kc) y duración de etapas.
 4. **FAO ECOCROP**: rangos de temperatura, pH y lluvia de cada cultivo.
+
+## Fuentes de cultivos: análisis (carpeta `Fuentes de cultivos/`)
+
+### 1. SIAP – Cierre agrícola 2025 (`Cierre_agricola_mun_2025.csv`)
+Cultivos anuales de Sonora 2025 (hectáreas sembradas):
+
+| Cultivo | Sembrada (ha) | Ciclo principal |
+|---|---|---|
+| Trigo grano | 59,555 | OI |
+| Papa | 19,161 | OI (y PV) |
+| Cártamo | 14,842 | OI |
+| Maíz grano | 11,987 | OI (y PV) |
+| Sorgo forrajero | 11,836 | PV |
+| Garbanzo grano | 10,326 | OI |
+| Ajonjolí | 4,016 | PV |
+| Frijol | 3,424 | OI y PV |
+| Algodón hueso | 1,828 | PV |
+| Sorgo grano | 1,751 | PV |
+| Canola | 15 | OI |
+
+- También hay hortalizas importantes por valor (sandía, calabacita, chile, tomate).
+- **Hallazgo 1:** la Agenda del INIFAP dice que el noroeste siembra en promedio ~289 mil ha de trigo
+  (2021-2025); en 2025 Sonora sembró solo ~60 mil. Coincide con la sequía que vio MODIS (13 % verde en feb 2025).
+- **Hallazgo 2:** la superficie "siniestrada" (perdida) es casi cero (612 ha de 181,660). En riego, la sequía no
+  aparece como cosecha perdida sino como **tierra que no se sembró** (no hubo agua en las presas).
+- **Pendiente:** comparar con cierres de años anteriores para confirmar la caída.
+
+### 2. INIFAP – Agenda Técnica Agrícola Sonora 2026 (169 págs.)
+Paquetes tecnológicos con: región, clima, suelo, fecha de siembra, riegos (volumen y calendario),
+fertilización, plagas, enfermedades, variedades, rendimiento y costos.
+- De nuestra lista trae: **trigo, maíz, cártamo, garbanzo, frijol, canola, sorgo (forrajero)**.
+- **No trae:** papa, ajonjolí, algodón (faltan fuentes para esos tres).
+- Ejemplo trigo: siembra 15 nov – 15 dic; ~7,500 m³/ha en 4 riegos (presiembra + 3 auxilios).
+
+### 3. FAO – "Crop water requirements" (FAO-24, Doorenbos y Pruitt) (70 págs.)
+- **No es específico de Sonora**; es el manual general (antecesor del FAO-56).
+- Sirve: **Tabla 21** (coeficiente Kc por etapa y clima) y **Tabla 22** (duración de etapas), Tabla 20
+  (rango de agua por temporada).
+- Trae Kc de: trigo, maíz, sorgo, frijol, "pulses" (garbanzo), cártamo, algodón, papa. **No trae** canola ni ajonjolí.
+- Uso propuesto: la Agenda da el agua **local** (Sonora); el método FAO permite calcularla para **otras regiones**
+  (escalabilidad) con la evapotranspiración de NASA POWER.
+
+### 4. FAO – ECOCROP ✅ (sin cuenta)
+- Portal: https://gaez.fao.org/pages/ecocrop · Datos: `https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=<id>`
+  (el sitio `ecocrop.review.fao.org` pide cuenta de Google; el de `apps.fao.org` no).
+- Por cultivo: temperatura óptima y absoluta (**temperatura media** de la temporada, no máxima diaria), lluvia anual,
+  pH, textura, salinidad, profundidad de suelo, temperatura que mata la planta, duración del ciclo.
+- Ojo: buscar por nombre científico **exacto** ("Zea mays" devolvía primero el teocintle).
+- La lluvia de ECOCROP es para cultivo de temporal; en Sonora casi todo es de riego, así que sirve más la
+  temperatura, el pH y la salinidad.
+
+| Cultivo | ID | Temp. óptima (°C) | Temp. absoluta (°C) | pH óptimo | Ciclo (días) |
+|---|---|---|---|---|---|
+| Trigo harinero (*T. aestivum*) | 2114 | 15–23 | 5–27 | 6–7 | 90–250 |
+| Trigo cristalino (*T. durum*) | 10582 | 17–25 | 6–30 | 6–7 | 120–180 |
+| Maíz (*Zea mays*) | 2175 | 18–33 | 10–47 | 5–7 | 65–365 |
+| Sorgo (*S. bicolor*) | 48747 | 22–35 | 8–40 | 5.5–7.5 | 90–300 |
+| Garbanzo (*C. arietinum*) | 2479 | 15–29 | 7–35 | 6–8.5 | 90–180 |
+| Frijol (*P. vulgaris*) | 1668 | 16–25 | 7–32 | 5.5–7.5 | 50–270 |
+| Cártamo (*C. tinctorius*) | 2514 | 20–32 | 5–45 | 6.5–7.5 | 120–245 |
+| Ajonjolí (*S. indicum*) | 1937 | 20–30 | 10–40 | 5.5–7.5 | 40–180 |
+| Algodón (*G. hirsutum*) | 1160 | 22–36 | 15–42 | 6–7.5 | 150–200 |
+| Canola (*B. napus*) | 549 | 15–25 | 5–41 | 6.5–7.6 | 85–340 |
+| Papa (*S. tuberosum*) | 1971 | 15–25 | 7–30 | 5–6.2 | 90–160 |
+
+### Cobertura por cultivo (qué fuente da qué)
+| Cultivo | INIFAP (fechas, agua local) | FAO-24 (Kc) | ECOCROP (temp., pH) |
+|---|---|---|---|
+| Trigo, maíz, cártamo, garbanzo, frijol | ✅ | ✅ | ✅ |
+| Sorgo | ✅ (forrajero) | ✅ | ✅ |
+| Canola | ✅ | ❌ | ✅ |
+| Papa, algodón | ❌ | ✅ | ✅ |
+| Ajonjolí | ❌ | ❌ | ✅ |
+
+### Decisión ✅ catálogo de la primera versión: 7 cultivos
+**Trigo, maíz, cártamo, garbanzo, frijol, sorgo y canola** (los que tienen paquete en la Agenda del INIFAP).
+Papa, ajonjolí y algodón quedan **fuera de la primera versión** (sin fechas ni agua locales); se pueden agregar después.

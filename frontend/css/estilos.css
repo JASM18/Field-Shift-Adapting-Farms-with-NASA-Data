@@ -200,3 +200,182 @@ h2 { font-size: 1.35rem; font-weight: 800; margin: 24px 0 4px; }
 .tarjeta-zona.peligro .tarjeta-zona-nombre { color: var(--rojo-texto); }
 .tarjeta-zona.agua { background: var(--azul-claro); border-color: #b9d3ec; }
 .tarjeta-zona.agua .tarjeta-zona-nombre { color: var(--azul-texto); }
+
+/* ---------- ¿Qué quieres sembrar? ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.chip {
+  padding: 10px 18px; border-radius: 999px; border: 2px solid var(--verde-borde);
+  background: #fff; color: var(--verde-oscuro); font: inherit; font-weight: 800; cursor: pointer;
+}
+.chip[aria-selected="true"] { background: var(--verde-oscuro); border-color: var(--verde-oscuro); color: #fff; }
+
+.veredicto { border: 1px solid; border-radius: 14px; padding: 14px 16px; margin-bottom: 20px; }
+.veredicto strong { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+.veredicto p { margin: 6px 0 0; }
+.veredicto ul { margin: 8px 0 0; padding-left: 18px; font-size: .9rem; }
+.veredicto ul:empty { display: none; }
+.veredicto.bueno { background: var(--verde-claro); border-color: var(--verde-borde); }
+.veredicto.bueno strong { color: var(--verde-oscuro); }
+.veredicto.bueno strong::before { content: "✓ "; }
+.veredicto.alerta { background: var(--amarillo-claro); border-color: var(--amarillo-borde); }
+.veredicto.alerta strong { color: var(--amarillo-texto); }
+.veredicto.alerta strong::before { content: "⚠ "; }
+.veredicto.peligro { background: var(--rojo-claro); border-color: var(--rojo-borde); }
+.veredicto.peligro strong { color: var(--rojo-texto); }
+.veredicto.peligro strong::before { content: "✕ "; }
+
+.bloque h3 { margin: 0 0 6px; font-size: 1.2rem; }
+.siembra-fechas { margin: 0 0 10px; color: var(--verde-oscuro); font-weight: 800; font-size: 1.05rem; }
+.meses-siembra { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+.meses-siembra li {
+  text-align: center; padding: 8px 0; border-radius: 6px; font-weight: 800; font-size: .85rem;
+  background: var(--pista); color: var(--texto-suave);
+}
+.meses-siembra li.mejor { background: var(--verde); color: #fff; }
+.meses-siembra li.se_puede { background: var(--verde-claro); color: var(--verde-oscuro); }
+.leyenda { font-size: .85rem; color: var(--texto-suave); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; }
+.muestra { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-left: 6px; }
+.muestra.mejor { background: var(--verde); }
+.muestra.se_puede { background: var(--verde-claro); border: 1px solid var(--verde-borde); }
+.muestra.no { background: var(--pista); border: 1px solid var(--linea); }
+.nota-chica { font-size: .82rem; color: var(--texto-suave); margin: 6px 0 0; }
+.nota-chica:empty { display: none; }
+
+.fila-dato { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--linea); }
+.fila-dato:first-of-type { margin-top: 12px; border-top: 1px solid var(--linea); }
+.fila-icono { font-size: 1.3rem; }
+.fila-dato > div { flex: 1; }
+.fila-dato small { color: var(--texto-suave); }
+.fila-dato strong { display: block; font-size: 1.05rem; margin-top: 2px; }
+.fila-dato p { margin: 4px 0 0; }
+.barra-agua { height: 10px; border: 2px solid #3d7cc9; border-radius: 6px; margin-top: 8px; overflow: hidden; }
+.barra-agua span { display: block; height: 100%; background: #1d4f8c; }
+.lista-simple { margin: 4px 0 0; padding-left: 18px; }
+.lista-simple li { margin-bottom: 4px; }
+
+.boton-lleno {
+  display: block; text-align: center; text-decoration: none; box-sizing: border-box;
+  width: 100%; padding: 14px; margin-top: 20px; border: 0; border-radius: 12px;
+  background: var(--verde-oscuro); color: #fff; font: inherit; font-size: 1.05rem; font-weight: 800;
+}
+.boton-lleno + .boton-contorno { margin-top: 10px; font-size: 1rem; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.mas-detalle { margin-top: 18px; font-size: .88rem; color: var(--texto-suave); }
+.mas-detalle summary { cursor: pointer; font-weight: 700; }
+
+/* ---------- ¿Te alcanza el agua? ---------- */
+.pregunta { font-size: 1.2rem; margin: 12px 0 10px; }
+.contador { display: flex; gap: 12px; align-items: stretch; }
+.contador > button {
+  width: 56px; border: 2px solid var(--verde-oscuro); border-radius: 12px; background: #fff;
+  color: var(--verde-oscuro); font-size: 1.6rem; font-weight: 800; cursor: pointer;
+}
+.contador-valor {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  background: var(--fondo-suave); border-radius: 12px; font-size: 1.5rem; font-weight: 800;
+}
+.contador-valor input {
+  width: 4.5ch; border: 0; background: transparent; font: inherit; text-align: right; color: var(--texto);
+}
+.opciones-agua { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.opciones-agua button {
+  border: 2px solid #b9d3ec; border-radius: 12px; background: #fff; padding: 10px 4px;
+  color: var(--azul-texto); font: inherit; cursor: pointer;
+}
+.opciones-agua strong { display: block; font-size: 1.1rem; }
+.opciones-agua small { font-size: .8rem; }
+.opciones-agua button[aria-checked="true"] { background: var(--azul-texto); border-color: var(--azul-texto); color: #fff; }
+.otra-lamina { display: block; margin-top: 10px; font-size: .9rem; color: var(--texto-suave); }
+.otra-lamina input { width: 5ch; font: inherit; padding: 2px 4px; border: 1px solid var(--linea); border-radius: 6px; }
+.disponible { color: var(--azul-texto); font-weight: 800; margin: 10px 0 0; }
+
+.cabe { margin-top: 20px; border-top: 2px solid #b9d3ec; padding-top: 6px; }
+.cabe h3 { font-size: 1.15rem; margin: 10px 0 4px; }
+.lista-cultivos { list-style: none; margin: 0; padding: 0; }
+.cultivo-agua { padding: 12px 0; border-bottom: 1px solid var(--linea); cursor: pointer; }
+.cultivo-agua.destacado { background: var(--fondo-suave); border-radius: 10px; padding: 12px 8px; }
+.cultivo-agua-fila { display: flex; align-items: center; gap: 12px; }
+.cultivo-agua-icono {
+  width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 800;
+}
+.cultivo-agua-textos { flex: 1; }
+.cultivo-agua-textos strong { display: block; font-size: 1.05rem; }
+.cultivo-agua-textos small { color: var(--texto-suave); }
+.cultivo-agua-estado { font-weight: 800; font-size: .9rem; text-align: right; }
+.alcanza .cultivo-agua-icono { background: var(--verde-claro); color: var(--verde-oscuro); }
+.alcanza .cultivo-agua-estado { color: var(--verde-oscuro); }
+.limitado .cultivo-agua-icono { background: var(--amarillo-claro); color: var(--amarillo-texto); }
+.limitado .cultivo-agua-estado { color: var(--amarillo-texto); }
+.falta .cultivo-agua-icono { background: var(--rojo-claro); color: var(--rojo-texto); }
+.falta .cultivo-agua-estado { color: var(--rojo-texto); }
+.sin_dato .cultivo-agua-icono { background: var(--pista); color: var(--texto-suave); }
+
+/* ---------- Tus próximos 3 ciclos ---------- */
+.campo { display: block; color: var(--texto-suave); margin-bottom: 14px; }
+.campo select {
+  display: block; width: 100%; margin-top: 6px; padding: 12px; border: 2px solid var(--verde-borde);
+  border-radius: 12px; background: #fff; font: inherit; font-size: 1.15rem; font-weight: 800; color: var(--texto);
+}
+.campo-titulo { color: var(--texto-suave); margin: 0 0 6px; }
+#planes { margin-top: 18px; }
+.plan { background: #fff; border: 1px solid var(--linea); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.plan.recomendado { border: 2px solid var(--verde-oscuro); }
+.plan p { margin: 10px 0 0; }
+.plan-cabeza { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.plan-cabeza h3 { margin: 0; font-size: 1.15rem; }
+.insignia { background: var(--verde-oscuro); color: #fff; font-size: .78rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.plan-ciclos { display: flex; align-items: center; gap: 4px; margin-top: 12px; }
+.plan-ciclo { flex: 1; background: var(--fondo-suave); border-radius: 10px; padding: 8px 4px; text-align: center; min-width: 0; }
+.plan-ciclo strong { display: block; font-size: .95rem; overflow-wrap: anywhere; }
+.plan-ciclo small { color: var(--texto-suave); font-size: .75rem; }
+.plan-ciclo.descanso strong { color: var(--texto-suave); }
+.plan-flecha { color: var(--texto-suave); font-size: 1.2rem; }
+.plan-indicadores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px; }
+.indicador small { display: block; color: var(--texto-suave); font-size: .8rem; }
+.indicador strong { font-size: 1.05rem; }
+.indicador .bueno { color: var(--verde-oscuro); }
+.indicador .alerta { color: var(--amarillo-texto); }
+.indicador .peligro { color: var(--rojo-texto); }
+.plan-aviso { font-size: .85rem; color: var(--rojo-texto); font-weight: 700; }
+
+.boton-enlace { display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
+
+/* ---------- Asesor (chat) ---------- */
+.chat-pantalla { display: flex; flex-direction: column; }
+.chat { flex: 1; display: flex; flex-direction: column; }
+.conversacion { flex: 1; display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
+.burbuja { max-width: 88%; padding: 10px 14px; border-radius: 16px; line-height: 1.45; }
+.burbuja p { margin: 0 0 6px; }
+.burbuja p:last-child { margin-bottom: 0; }
+.burbuja ul, .burbuja ol { margin: 4px 0 8px; padding-left: 20px; }
+.burbuja.asesor { align-self: flex-start; background: var(--fondo-suave); border: 1px solid var(--linea); border-bottom-left-radius: 4px; }
+.burbuja.usuario { align-self: flex-end; background: var(--verde-oscuro); color: #fff; border-bottom-right-radius: 4px; }
+.burbuja.pensando { color: var(--texto-suave); font-style: italic; }
+.burbuja-pie { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.burbuja-pie small { color: var(--texto-suave); font-size: .75rem; }
+.burbuja-voz { border: 1px solid var(--verde-borde); background: #fff; color: var(--verde-oscuro); border-radius: 999px; padding: 4px 10px; font: inherit; font-size: .8rem; cursor: pointer; }
+.sugerencias { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.sugerencias button { border: 1px solid var(--verde-borde); background: var(--verde-claro); color: var(--verde-oscuro); border-radius: 999px; padding: 8px 12px; font: inherit; font-size: .85rem; cursor: pointer; text-align: left; }
+.chat-entrada { position: sticky; bottom: 0; display: flex; gap: 8px; padding: 10px 0; background: var(--fondo); }
+.chat-entrada input { flex: 1; min-width: 0; padding: 12px 14px; border: 2px solid var(--verde-borde); border-radius: 999px; font: inherit; }
+.chat-boton { width: 46px; flex: none; border: 2px solid var(--verde-oscuro); border-radius: 50%; background: #fff; font-size: 1.1rem; cursor: pointer; }
+.chat-boton.enviar { background: var(--verde-oscuro); color: #fff; }
+.chat-boton.escuchando { background: var(--rojo-claro); border-color: var(--rojo-texto); }
+.chat-aviso { margin-top: 4px; }
+.boton-asesor { display: block; margin-top: 10px; text-align: center; text-decoration: none; box-sizing: border-box; }
+
+/* ---------- Mapa interactivo del Inicio ---------- */
+.mapa-real { height: 230px; margin-top: 16px; border-radius: 16px; overflow: hidden; z-index: 0; background: #cfd8c4; }
+.pin-mapa { background: none; border: 0; font-size: 30px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4)); }
+.mapa-acciones { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.mapa-mensaje { font-size: .85rem; opacity: .9; }
+.mapa-boton {
+  border: 1px solid rgba(255,255,255,.7); background: transparent; color: #fff; border-radius: 999px;
+  padding: 7px 12px; font: inherit; font-size: .85rem; font-weight: 700; cursor: pointer;
+}
+.mapa-boton.principal { background: #fff; color: var(--verde-oscuro); border-color: #fff; }
+.mapa-confirmar { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  background: rgba(255,255,255,.12); padding: 8px 10px; border-radius: 12px; font-size: .85rem; }
+.mapa-confirmar[hidden] { display: none; }
+.mapa-confirmar span { flex: 1; min-width: 120px; }
+.leaflet-control-layers-expanded { color: var(--texto); font-size: .85rem; }

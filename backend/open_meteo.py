@@ -32,3 +32,33 @@ def pronostico_diario(lat, lon):
     CARPETA_CACHE.mkdir(exist_ok=True)
     archivo.write_text(json.dumps(datos))
     return datos
+
+
+def pronostico_estacional(lat, lon):
+    """Pronóstico de los próximos ~6 meses (modelo ECMWF SEAS5 vía Open-Meteo).
+
+    El modelo corre muchas veces con condiciones un poco distintas ("miembros").
+    Devuelve {"time": [...], "miembros": {"temperature_2m_max": [[...], ...], ...}}
+    con una lista de valores diarios por cada miembro. Se guarda una vez al día.
+    """
+    hoy = datetime.now()
+    lat, lon = round(lat, 2), round(lon, 2)
+    archivo = CARPETA_CACHE / f"openmeteo_estacional_{lat}_{lon}_{hoy:%Y%m%d}.json"
+    if archivo.exists():
+        return json.loads(archivo.read_text())
+
+    variables = ("temperature_2m_max", "temperature_2m_min", "precipitation_sum")
+    diario = pedir_json("https://seasonal-api.open-meteo.com/v1/seasonal", {
+        "latitude": lat,
+        "longitude": lon,
+        "daily": ",".join(variables),
+        "forecast_days": 183,
+    })["daily"]
+
+    datos = {"time": diario["time"], "miembros": {
+        v: [serie for clave, serie in diario.items() if clave == v or clave.startswith(v + "_member")]
+        for v in variables
+    }}
+    CARPETA_CACHE.mkdir(exist_ok=True)
+    archivo.write_text(json.dumps(datos))
+    return datos

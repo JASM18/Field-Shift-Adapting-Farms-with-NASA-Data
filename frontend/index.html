@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Field Shift</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
@@ -11,17 +12,22 @@
     <header class="encabezado">
       <p id="saludo">Buenos días</p>
       <h1>📍 Tu parcela · <span id="nombre-lugar"></span></h1>
-      <!-- Mapa decorativo de parcelas (más adelante puede ser un mapa real) -->
-      <div class="mapa-parcelas" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <div class="mapa-marcador"><b>📍</b><small>Estás aquí</small></div>
+      <!-- Mapa interactivo: toca para mover tu parcela -->
+      <div id="mapa" class="mapa-real" aria-label="Mapa de tu parcela"></div>
+      <div class="mapa-acciones">
+        <button type="button" id="mi-ubicacion" class="mapa-boton">📍 Mi ubicación</button>
+        <span id="mapa-mensaje" class="mapa-mensaje">Toca el mapa para elegir tu parcela</span>
+      </div>
+      <div id="mapa-confirmar" class="mapa-confirmar" hidden>
+        <span id="mapa-punto"></span>
+        <button type="button" id="usar-punto" class="mapa-boton principal">Usar este punto</button>
+        <button type="button" id="cancelar-punto" class="mapa-boton">Cancelar</button>
       </div>
     </header>
 
     <main>
       <button id="escuchar" class="boton-contorno" type="button">🔊 Escuchar el resumen de hoy</button>
+      <a href="asesor.html" class="boton-lleno boton-asesor">💬 Pregúntale a la AI</a>
 
       <h2>¿Cómo está tu zona hoy?</h2>
       <p class="nota" id="nota-comparacion">Comparado con lo normal para esta época</p>
@@ -39,26 +45,28 @@
           <span class="icono">☀️</span>
           <span><strong>El clima de mi zona</strong><small>Qué meses son buenos y cuáles peligrosos</small></span>
         </a></li>
-        <li><span class="deshabilitado">
+        <li><a href="sembrar.html">
           <span class="icono">🌱</span>
-          <span><strong>¿Qué puedo sembrar?</strong><small>Próximamente</small></span>
-        </span></li>
-        <li><span class="deshabilitado">
+          <span><strong>¿Qué puedo sembrar?</strong><small>Mejor época, agua y riesgos de cada cultivo</small></span>
+        </a></li>
+        <li><a href="planes.html">
           <span class="icono">🔄</span>
-          <span><strong>Planear mis próximos ciclos</strong><small>Próximamente</small></span>
-        </span></li>
+          <span><strong>Planear mis próximos ciclos</strong><small>Qué sembrar después para cuidar la tierra</small></span>
+        </a></li>
         <li><a href="suelo.html">
           <span class="icono">🟫</span>
           <span><strong>Mi suelo</strong><small>Explicado en palabras sencillas</small></span>
         </a></li>
-        <li><span class="deshabilitado">
+        <li><a href="agua.html">
           <span class="icono">💧</span>
-          <span><strong>¿Me alcanza el agua?</strong><small>Próximamente</small></span>
-        </span></li>
+          <span><strong>¿Me alcanza el agua?</strong><small>Según tus hectáreas y el agua asignada</small></span>
+        </a></li>
       </ul>
     </main>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script type="module" src="js/mapa.js"></script>
   <script type="module" src="js/inicio.js"></script>
 </body>
 </html>

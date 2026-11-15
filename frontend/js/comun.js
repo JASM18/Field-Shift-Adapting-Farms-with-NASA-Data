@@ -1,13 +1,37 @@
 // Funciones que comparten todas las pantallas.
 
-// Ubicación de la parcela. Por ahora: Cajeme, Sonora.
-// Se puede probar otra zona agregando a la dirección: ?lat=29.07&lon=-110.95&nombre=Hermosillo
+// Ubicación de la parcela, en este orden:
+//   1. La dirección (?lat=29.07&lon=-110.95&nombre=Hermosillo), útil para compartir un enlace
+//   2. La que el usuario eligió en el mapa del Inicio (se guarda en este navegador)
+//   3. Por defecto: Cajeme, Sonora
+const CLAVE_UBICACION = "cropy.ubicacion";
+export const UBICACION_POR_DEFECTO = { lat: 27.37, lon: -109.93, nombre: "Cajeme, Sonora" };
+
+function ubicacionGuardada() {
+  try {
+    const u = JSON.parse(localStorage.getItem(CLAVE_UBICACION));
+    return u && Number.isFinite(u.lat) && Number.isFinite(u.lon) ? u : null;
+  } catch {
+    return null; // navegación privada o almacenamiento bloqueado
+  }
+}
+
+export function guardarUbicacion(ubicacion) {
+  try {
+    localStorage.setItem(CLAVE_UBICACION, JSON.stringify(ubicacion));
+  } catch { /* sin almacenamiento: se usará solo en esta visita */ }
+}
+
 const parametros = new URLSearchParams(location.search);
-export const UBICACION = {
-  lat: Number(parametros.get("lat")) || 27.37,
-  lon: Number(parametros.get("lon")) || -109.93,
-  nombre: parametros.get("nombre") || "Cajeme, Sonora",
-};
+const desdeDireccion = Number.isFinite(parseFloat(parametros.get("lat"))) && Number.isFinite(parseFloat(parametros.get("lon")))
+  ? { lat: parseFloat(parametros.get("lat")), lon: parseFloat(parametros.get("lon")),
+      nombre: parametros.get("nombre") || "Ubicación elegida", origen: "direccion" }
+  : null;
+const guardada = ubicacionGuardada();
+
+export const UBICACION = desdeDireccion
+  || (guardada && { ...guardada, origen: "guardada" })
+  || { ...UBICACION_POR_DEFECTO, origen: "defecto" };
 
 // Pide datos a nuestro servidor (/api/...). Si falla, lanza un error con un mensaje entendible.
 export async function pedirApi(ruta, extra = {}) {

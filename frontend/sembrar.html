@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Qué quieres sembrar? · Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla">
+    <header class="encabezado">
+      <a class="volver" href="index.html">Inicio</a>
+      <h1>¿Qué quieres sembrar?</h1>
+      <p>Toca un cultivo y te decimos si conviene aquí</p>
+    </header>
+
+    <main>
+      <div id="chips" class="chips" role="tablist" aria-label="Cultivos"></div>
+      <div id="estado" class="estado">Consultando…</div>
+
+      <div id="resultado" hidden>
+        <section id="veredicto" class="veredicto">
+          <strong id="veredicto-titulo"></strong>
+          <p id="veredicto-razon"></p>
+          <ul id="veredicto-avisos"></ul>
+        </section>
+
+        <section class="bloque">
+          <h3>📅 Cuándo sembrar</h3>
+          <p id="siembra-texto" class="siembra-fechas"></p>
+          <ol id="siembra-meses" class="meses-siembra"></ol>
+          <p class="leyenda">
+            <span class="muestra mejor"></span> Mejor época
+            <span class="muestra se_puede"></span> Se puede
+            <span class="muestra no"></span> No conviene
+          </p>
+          <p id="siembra-nota" class="nota-chica"></p>
+        </section>
+
+        <section class="fila-dato">
+          <span class="fila-icono">💧</span>
+          <div>
+            <small>Agua que necesita</small>
+            <strong id="agua-texto"></strong>
+            <div class="barra-agua"><span id="agua-barra"></span></div>
+            <p id="agua-detalle" class="nota-chica"></p>
+          </div>
+        </section>
+
+        <section class="fila-dato">
+          <span class="fila-icono">⚠️</span>
+          <div>
+            <small>Riesgo en tu zona</small>
+            <ul id="riesgos" class="lista-simple"></ul>
+            <p id="este-anio" class="nota-chica"></p>
+          </div>
+        </section>
+
+        <section class="fila-dato">
+          <span class="fila-icono">🌱</span>
+          <div>
+            <small>Bueno saber</small>
+            <p id="bueno-saber"></p>
+            <p id="rendimiento" class="nota-chica"></p>
+          </div>
+        </section>
+
+        <a id="ir-agua" class="boton-lleno" href="agua.html">¿Me alcanza el agua para esto?</a>
+        <a id="ir-planes" class="boton-contorno boton-enlace" href="planes.html">Ver qué sembrar después</a>
+
+        <details class="mas-detalle">
+          <summary>Ver datos y fuentes</summary>
+          <p id="detalle-clima"></p>
+          <ul id="fuentes" class="lista-simple"></ul>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="js/sembrar.js"></script>
+</body>
+</html>

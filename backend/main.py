@@ -9,16 +9,20 @@ Correr en desarrollo:
 import os
 from pathlib import Path
 
-import requests
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.staticfiles import StaticFiles
+from typing import Literal
 
-from backend import inicio, suelo
+import anthropic
+import requests
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
+
+from backend import agua, asesor, inicio, planes, sembrar, suelo
 from backend.clima import resumen_mensual
 from backend.fuentes_suelo import propiedades_suelo, relieve
 from backend.modis import superficie_verde, ultima_fecha
 from backend.nasa_power import clima_diario_historico, datos_recientes, humedad_suelo_historica
-from backend.open_meteo import pronostico_diario
+from backend.open_meteo import pronostico_diario, pronostico_estacional
 
 AÑOS_A_COMPARAR = 5  # años anteriores para la tarjeta "Siembras alrededor"
 
@@ -62,6 +66,90 @@ def api_suelo(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=
 
     return {"humedad": humedad, "textura": textura, "materia_organica": materia,
             "ph": acidez, "terreno": terreno}
+
+
+# ---- ¿Qué quieres sembrar? ----
+
+@app.get("/api/cultivos")
+def api_cultivos():
+    return sembrar.lista_cultivos()
+
+
+@app.get("/api/sembrar")
+def api_sembrar(cultivo: str, lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    """Evalúa un cultivo para la parcela. El clima histórico es obligatorio; el pronóstico,
+    el suelo y la humedad son opcionales: si alguno falla, se evalúa sin él."""
+    try:
+        historico = clima_diario_historico(lat, lon)
+    except requests.RequestException:
+        raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
+
+    def opcional(funcion):
+        try:
+            return funcion()
+        except requests.RequestException:
+            return None
+
+    pronostico = opcional(lambda: pronostico_estacional(lat, lon))
+    props = opcional(lambda: propiedades_suelo(lat, lon))
+    grupo = suelo.textura(props).get("nombre") if props else None
+    humedad = opcional(lambda: suelo.humedad(humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"]))
+    resultado = sembrar.evaluar(cultivo, historico, pronostico, props, grupo, humedad)
+    if "error" in resultado:
+        raise HTTPException(404, resultado["error"])
+    return resultado
+
+
+# ---- Asesor con IA ----
+
+class Mensaje(BaseModel):
+    rol: Literal["user", "assistant"]
+    texto: str = Field(max_length=4000)
+
+
+class PreguntaAsesor(BaseModel):
+    mensajes: list[Mensaje] = Field(min_length=1, max_length=40)
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+    nombre: str = Field(default="tu zona", max_length=80)
+
+
+@app.post("/api/asesor")
+def api_asesor(pregunta: PreguntaAsesor, request: Request):
+    if not asesor.permitir(request.client.host if request.client else "?"):
+        raise HTTPException(429, "Llegaste al límite de preguntas por hora. Intenta más tarde.")
+    try:
+        return asesor.responder([m.model_dump() for m in pregunta.mensajes],
+                                pregunta.lat, pregunta.lon, pregunta.nombre)
+    except anthropic.AuthenticationError:
+        raise HTTPException(500, "El asesor no está configurado (revisa la llave en el archivo .env).")
+    except anthropic.RateLimitError:
+        raise HTTPException(429, "El asesor está muy ocupado. Intenta en un minuto.")
+    except anthropic.APIConnectionError:
+        raise HTTPException(503, "No hay conexión con el asesor. Revisa tu internet.")
+    except anthropic.APIStatusError:
+        raise HTTPException(502, "El asesor tuvo un problema. Intenta de nuevo.")
+
+
+# ---- Tus próximos 3 ciclos ----
+
+@app.get("/api/planes")
+def api_planes(ultimo: str, lamina_cm: float = Query(gt=0, le=300),
+               lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    """Planes de rotación. Usa el clima de la zona para descartar cultivos que no convienen."""
+    try:
+        historico = clima_diario_historico(lat, lon)
+    except requests.RequestException:
+        raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
+    veredictos = {c["id"]: sembrar.evaluar(c["id"], historico)["veredicto"] for c in sembrar.lista_cultivos()}
+    return planes.generar(ultimo, lamina_cm, veredictos)
+
+
+# ---- ¿Te alcanza el agua? ----
+
+@app.get("/api/agua")
+def api_agua(hectareas: float = Query(gt=0, le=10_000), lamina_cm: float = Query(gt=0, le=300)):
+    return agua.calcular(hectareas, lamina_cm)
 
 
 # ---- Inicio: una ruta por tarjeta, para que la página las cargue por separado ----

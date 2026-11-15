@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tus próximos 3 ciclos · Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla fondo-suave">
+    <header class="encabezado">
+      <a class="volver" href="index.html">Inicio</a>
+      <h1>Tus próximos 3 ciclos</h1>
+      <p>Compara planes antes de decidir</p>
+    </header>
+
+    <main>
+      <label class="campo">Lo último que sembraste
+        <select id="ultimo"></select>
+      </label>
+
+      <p class="campo-titulo">El agua que sueles tener</p>
+      <div class="opciones-agua" role="radiogroup" aria-label="Agua que sueles tener">
+        <button type="button" data-cm="30" role="radio"><strong>Poca</strong><small>30 cm de lámina</small></button>
+        <button type="button" data-cm="45" role="radio" aria-checked="true"><strong>Media</strong><small>45 cm de lámina</small></button>
+        <button type="button" data-cm="70" role="radio"><strong>Completa</strong><small>70 cm de lámina</small></button>
+      </div>
+
+      <div id="estado" class="estado">Armando planes…</div>
+      <div id="planes"></div>
+
+      <p class="fuente">Los planes se arman con el catálogo de cultivos (INIFAP, FAO, ECOCROP), descartan los que
+        no convienen con el clima de tu zona (NASA POWER) y se ordenan según tu suelo y el agua que tengas.
+        Son sugerencias: la decisión es tuya.</p>
+    </main>
+  </div>
+
+  <script type="module" src="js/planes.js"></script>
+</body>
+</html>

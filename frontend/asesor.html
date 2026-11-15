@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pregúntale a la AI · Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla chat-pantalla">
+    <header class="encabezado">
+      <a class="volver" href="index.html">Inicio</a>
+      <h1>💬 Pregúntale a la AI</h1>
+      <p>Responde con los datos de tu zona: NASA, INIFAP y más</p>
+    </header>
+
+    <main class="chat">
+      <div id="conversacion" class="conversacion" aria-live="polite">
+        <div class="burbuja asesor">
+          <p>¡Hola! Soy la AI de la app. Puedo decirte qué te conviene sembrar, si te alcanza el agua,
+            cómo está tu suelo o cómo rotar tus cultivos. ¿Qué quieres saber?</p>
+        </div>
+      </div>
+
+      <div id="sugerencias" class="sugerencias">
+        <button type="button">¿Qué me conviene sembrar este invierno?</button>
+        <button type="button">Tengo 10 hectáreas y poca agua, ¿qué alcanza?</button>
+        <button type="button">¿Cómo está mi suelo?</button>
+        <button type="button">¿Qué siembro después del trigo?</button>
+      </div>
+
+      <form id="formulario" class="chat-entrada">
+        <button type="button" id="microfono" class="chat-boton" aria-label="Hablar" title="Hablar">🎤</button>
+        <input id="pregunta" type="text" maxlength="1000" placeholder="Escribe tu pregunta…" autocomplete="off">
+        <button type="submit" class="chat-boton enviar" aria-label="Enviar">➤</button>
+      </form>
+      <p class="fuente chat-aviso">Respuestas generadas por IA (Claude) con los datos de la app. Pueden tener errores:
+        la decisión final es tuya.</p>
+    </main>
+  </div>
+
+  <script type="module" src="js/asesor.js"></script>
+</body>
+</html>

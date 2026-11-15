@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Te alcanza el agua? · Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla">
+    <header class="encabezado">
+      <a class="volver" href="index.html">Inicio</a>
+      <h1>¿Te alcanza el agua?</h1>
+      <p>Dos preguntas y te decimos qué cultivos caben</p>
+    </header>
+
+    <main>
+      <h2 class="pregunta">1. ¿Cuántas hectáreas vas a sembrar?</h2>
+      <div class="contador">
+        <button type="button" id="menos" aria-label="Menos hectáreas">−</button>
+        <label class="contador-valor">
+          <input id="hectareas" type="number" inputmode="decimal" min="0.5" step="0.5" value="10" aria-label="Hectáreas">
+          <span>ha</span>
+        </label>
+        <button type="button" id="mas" aria-label="Más hectáreas">+</button>
+      </div>
+      <p class="nota-chica">¿No sabes? Dibujar tu parcela en el mapa: próximamente.</p>
+
+      <h2 class="pregunta">2. ¿Cuánta agua te asignaron este ciclo?</h2>
+      <div class="opciones-agua" role="radiogroup" aria-label="Agua asignada">
+        <button type="button" data-cm="30" role="radio"><strong>Poca</strong><small>30 cm de lámina</small></button>
+        <button type="button" data-cm="45" role="radio"><strong>Media</strong><small>45 cm de lámina</small></button>
+        <button type="button" data-cm="70" role="radio"><strong>Completa</strong><small>70 cm de lámina</small></button>
+      </div>
+      <label class="otra-lamina">Otra cantidad:
+        <input id="lamina" type="number" inputmode="decimal" min="1" max="300" step="1" value="45"> cm de lámina
+      </label>
+      <p id="disponible" class="disponible"></p>
+
+      <section class="cabe">
+        <h3>Esto es lo que cabe</h3>
+        <div id="estado" class="estado" hidden></div>
+        <ul id="lista" class="lista-cultivos"></ul>
+      </section>
+
+      <p class="fuente">Cálculo: agua de riego que recomienda el INIFAP para cada cultivo en Sonora
+        (Agenda Técnica Agrícola 2026) × tus hectáreas. 1 cm de lámina = 100 m³ por hectárea;
+        1 millar = 1,000 m³. Toca un cultivo para ver cómo se reparten sus riegos.</p>
+    </main>
+  </div>
+
+  <script type="module" src="js/agua.js"></script>
+</body>
+</html>

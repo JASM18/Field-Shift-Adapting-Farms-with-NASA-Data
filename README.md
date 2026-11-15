@@ -19,7 +19,13 @@ DEV=1 .venv/bin/uvicorn backend.main:app --reload --timeout-graceful-shutdown 3 
 - En la computadora: http://localhost:8000
 - En el celular (mismo WiFi): `http://<IP de la computadora>:8000`
 - Con `DEV=1` la página se recarga sola cada vez que cambia un archivo.
-- Otra ubicación: `http://localhost:8000/?lat=29.07&lon=-110.95&nombre=Hermosillo`
+- Ubicación: el Inicio la detecta con el GPS (requiere HTTPS o localhost) o se elige tocando el mapa; se guarda en el navegador.
+- Otra ubicación por enlace: `http://localhost:8000/?lat=29.07&lon=-110.95&nombre=Hermosillo`
+
+## Asesor con IA
+
+Necesita un archivo `.env` en la raíz con `ANTHROPIC_API_KEY=...` (está en `.gitignore`: **nunca subirlo**).
+Límite: 30 preguntas por persona por hora (`backend/asesor.py`).
 
 ## Estructura
 
@@ -34,12 +40,21 @@ backend/            Servidor en Python (FastAPI)
   open_meteo.py     Open-Meteo: días recientes y pronóstico de 16 días
   modis.py          MODIS (ORNL DAAC): superficie verde alrededor de la parcela
   inicio.py         Tarjetas del Inicio "¿Cómo está tu zona hoy?" (reglas ajustables)
+  sembrar.py        Pantalla "¿Qué quieres sembrar?": cruza catálogo + clima + pronóstico (reglas ajustables)
+  agua.py           Pantalla "¿Te alcanza el agua?": hectáreas × lámina contra el agua de cada cultivo
+  planes.py         Pantalla "Tus próximos 3 ciclos": planes de rotación A/B/C (reglas ajustables)
+  asesor.py         Asesor con IA (Claude Sonnet 5.5): responde usando las mismas funciones como herramientas
 frontend/           Páginas (HTML/CSS/JS)
   index.html        Inicio
   clima.html        El clima de tu zona
   suelo.html        Así es tu suelo
+  sembrar.html      ¿Qué quieres sembrar?
+  agua.html         ¿Te alcanza el agua?
+  planes.html       Tus próximos 3 ciclos
+  asesor.html       Pregúntale a tu asesor (chat con IA, voz)
   css/estilos.css   Estilos basados en el diseño (docs/diseno/)
-  js/               Código de cada pantalla
+  js/               Código de cada pantalla (mapa.js: mapa interactivo y GPS del Inicio)
+data/cultivos.json  Catálogo de 7 cultivos (INIFAP, FAO-24, ECOCROP, SIAP), con fuente en cada dato
 docs/               Notas, evaluación de datasets, diseño
 pruebas/            Scripts de prueba de APIs
 ```
@@ -50,10 +65,11 @@ pruebas/            Scripts de prueba de APIs
 |---|---|---|
 | El clima de tu zona | NASA POWER | ✅ Funciona |
 | Inicio | NASA POWER, Open-Meteo, MODIS | ✅ Funciona |
-| ¿Qué puedo sembrar? | Catálogo de cultivos + clima + Open-Meteo | ⏳ Falta catálogo |
-| Planear mis próximos ciclos | Reglas de rotación | ⏳ Falta catálogo |
+| ¿Qué puedo sembrar? | Catálogo de cultivos + NASA POWER + Open-Meteo (6 meses) + SoilGrids | ✅ Funciona |
+| Planear mis próximos ciclos | Catálogo (nitrógeno, agua, familia) + clima de NASA POWER | ✅ Funciona |
 | Mi suelo | SoilGrids, SRTM, NASA POWER | ✅ Funciona |
-| ¿Me alcanza el agua? | NASA POWER + FAO-56 | ⏳ |
+| ¿Me alcanza el agua? | Catálogo de cultivos (agua del INIFAP) | ✅ Funciona |
+| Asesor con IA | Claude Sonnet 5.5 + todas las fuentes anteriores (como herramientas) | ✅ Funciona |
 
 ## Datos
 
