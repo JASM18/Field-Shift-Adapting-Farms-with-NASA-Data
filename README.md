@@ -22,9 +22,21 @@ DEV=1 .venv/bin/uvicorn backend.main:app --reload --timeout-graceful-shutdown 3 
 - Ubicación: el Inicio la detecta con el GPS (requiere HTTPS o localhost) o se elige tocando el mapa; se guarda en el navegador.
 - Otra ubicación por enlace: `http://localhost:8000/?lat=29.07&lon=-110.95&nombre=Hermosillo`
 
+## Fuera de Sonora (escalabilidad)
+
+El catálogo de cultivos (fechas de siembra, agua, rendimiento, riesgos de manejo) es del INIFAP para **Sonora**
+(región definida en `data/cultivos.json` → `_info.region`). Si la parcela está fuera:
+- La **fecha de siembra se calcula con el clima local** (30 años de NASA POWER): se prueban 24 fechas y se elige
+  la que da más días en la temperatura ideal del cultivo, sin heladas ni calor extremo, aprovechando la lluvia.
+- No se muestran los riesgos escritos para Sonora; sí los calculados con el clima local.
+- Agua y rendimiento se marcan como "referencia de Sonora", y las pantallas muestran un aviso 🌎.
+
 ## Asesor con IA
 
 Necesita un archivo `.env` en la raíz con `ANTHROPIC_API_KEY=...` (está en `.gitignore`: **nunca subirlo**).
+Quien clone el repositorio no tendrá la llave: la AI dirá «no está configurada» y el resto de la app funciona igual.
+Para activarla: copiar `.env.example` como `.env`, pegar la llave (pedirla por un medio privado, no por GitHub
+ni grupos) y reiniciar el servidor. Lo más sencillo para el equipo: usar la app publicada, que ya tiene la llave.
 Límite: 30 preguntas por persona por hora (`backend/asesor.py`).
 
 ## Estructura

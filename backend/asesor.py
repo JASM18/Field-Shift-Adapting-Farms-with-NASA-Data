@@ -41,6 +41,15 @@ _cargar_env()
 _cliente = None
 
 
+def configurado():
+    """¿Este servidor tiene llave para la AI? (en .env o en el entorno)."""
+    return bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"))
+
+
+SIN_LLAVE = ("La AI no está configurada en este servidor: falta la llave ANTHROPIC_API_KEY en el archivo .env "
+             "(ver README, sección «Asesor con IA»).")
+
+
 def cliente():
     """Cliente de Anthropic. Usa solo IPv4 (en algunas redes el IPv6 está roto, ver backend/red.py)."""
     global _cliente
@@ -84,6 +93,10 @@ El pronóstico de 6 meses es una tendencia, no una certeza.
 - El catálogo tiene solo 7 cultivos: trigo, maíz, cártamo, garbanzo, frijol, sorgo forrajero y canola. \
 Si preguntan por otro, acláralo y, si das orientación, márcala como general.
 - Los datos de clima son de la zona (cuadros de unos 50 km), no de la parcela exacta.
+- El catálogo de cultivos (fechas, agua, rendimiento, riesgos de manejo) es de Sonora, México (INIFAP). Si las \
+herramientas dicen que la parcela está fuera de esa región ("aviso_region"), acláralo: ahí las fechas se estiman \
+con el clima local de NASA POWER y el agua y el rendimiento son solo referencias. No menciones lugares de Sonora \
+a un agricultor que está en otra parte.
 - Atribuye bien las fuentes: NASA POWER (clima de 30 años y humedad del suelo), NASA MODIS (siembras vistas \
 por satélite), NASA SRTM (relieve), SoilGrids (tipo de suelo), INIFAP / FAO / ECOCROP (datos de cultivos). \
 Los pronósticos de 16 días y de 6 meses son de Open-Meteo (modelo europeo ECMWF), NO de la NASA.
@@ -144,7 +157,7 @@ def _herramientas(lat, lon):
         def calcular():
             props, grupo = contexto_cultivo()
             return sembrar.evaluar(cultivo, clima_diario_historico(lat, lon), pronostico_estacional(lat, lon),
-                                   props, grupo, humedad())
+                                   props, grupo, humedad(), lat=lat, lon=lon)
         return proteger(calcular)
 
     @beta_tool
@@ -178,7 +191,7 @@ def _herramientas(lat, lon):
             hectareas: hectáreas que va a sembrar.
             lamina_cm: lámina de riego asignada en centímetros (por ejemplo 30 = poca, 45 = media, 70 = completa).
         """
-        return _json(agua.calcular(hectareas, lamina_cm))
+        return _json(agua.calcular(hectareas, lamina_cm, dentro_region=sembrar.en_region(lat, lon)))
 
     @beta_tool
     def planes_rotacion(ultimo: str, lamina_cm: float) -> str:
@@ -191,8 +204,9 @@ def _herramientas(lat, lon):
         """
         def calcular():
             historico = clima_diario_historico(lat, lon)
-            veredictos = {c["id"]: sembrar.evaluar(c["id"], historico)["veredicto"] for c in sembrar.lista_cultivos()}
-            return planes.generar(ultimo, lamina_cm, veredictos)
+            veredictos = {c["id"]: sembrar.evaluar(c["id"], historico, lat=lat, lon=lon)["veredicto"]
+                          for c in sembrar.lista_cultivos()}
+            return planes.generar(ultimo, lamina_cm, veredictos, dentro_region=sembrar.en_region(lat, lon))
         return proteger(calcular)
 
     return [estado_actual_zona, clima_por_mes, evaluar_cultivo, ficha_cultivo,

@@ -379,3 +379,16 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .mapa-confirmar[hidden] { display: none; }
 .mapa-confirmar span { flex: 1; min-width: 120px; }
 .leaflet-control-layers-expanded { color: var(--texto); font-size: .85rem; }
+
+/* ---------- Aviso de región (fuera de Sonora) ---------- */
+.aviso-region { background: var(--azul-claro); color: var(--azul-texto); border: 1px solid #b9d3ec;
+  border-radius: 12px; padding: 10px 12px; font-size: .88rem; margin: 0 0 14px; }
+.aviso-region[hidden] { display: none; }
+
+/* ---------- Logo ---------- */
+.marca { display: flex; align-items: center; gap: 10px; }
+.marca img { width: 52px; height: 52px; flex: none; }
+.marca-nombre { font-size: 1.5rem; font-weight: 800; letter-spacing: .5px; }
+.marca-saludo { margin-left: auto; opacity: .9; font-size: .95rem; }
+.barra-superior { display: flex; justify-content: space-between; align-items: center; }
+.logo-chico { width: 36px; height: 36px; }

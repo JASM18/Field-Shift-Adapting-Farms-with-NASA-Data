@@ -94,7 +94,7 @@ def api_sembrar(cultivo: str, lat: float = Query(ge=-90, le=90), lon: float = Qu
     props = opcional(lambda: propiedades_suelo(lat, lon))
     grupo = suelo.textura(props).get("nombre") if props else None
     humedad = opcional(lambda: suelo.humedad(humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"]))
-    resultado = sembrar.evaluar(cultivo, historico, pronostico, props, grupo, humedad)
+    resultado = sembrar.evaluar(cultivo, historico, pronostico, props, grupo, humedad, lat=lat, lon=lon)
     if "error" in resultado:
         raise HTTPException(404, resultado["error"])
     return resultado
@@ -114,21 +114,32 @@ class PreguntaAsesor(BaseModel):
     nombre: str = Field(default="tu zona", max_length=80)
 
 
+@app.get("/api/asesor/estado")
+def api_asesor_estado():
+    """La pantalla de la AI lo consulta al abrir para avisar si no está disponible."""
+    return {"disponible": asesor.configurado(), "mensaje": None if asesor.configurado() else asesor.SIN_LLAVE}
+
+
 @app.post("/api/asesor")
 def api_asesor(pregunta: PreguntaAsesor, request: Request):
+    if not asesor.configurado():
+        raise HTTPException(503, asesor.SIN_LLAVE)
     if not asesor.permitir(request.client.host if request.client else "?"):
         raise HTTPException(429, "Llegaste al límite de preguntas por hora. Intenta más tarde.")
     try:
         return asesor.responder([m.model_dump() for m in pregunta.mensajes],
                                 pregunta.lat, pregunta.lon, pregunta.nombre)
     except anthropic.AuthenticationError:
-        raise HTTPException(500, "El asesor no está configurado (revisa la llave en el archivo .env).")
+        raise HTTPException(500, "La llave de la AI no es válida (revisa ANTHROPIC_API_KEY en el archivo .env).")
     except anthropic.RateLimitError:
-        raise HTTPException(429, "El asesor está muy ocupado. Intenta en un minuto.")
+        raise HTTPException(429, "La AI está muy ocupada. Intenta en un minuto.")
     except anthropic.APIConnectionError:
-        raise HTTPException(503, "No hay conexión con el asesor. Revisa tu internet.")
+        raise HTTPException(503, "No hay conexión con la AI. Revisa tu internet.")
     except anthropic.APIStatusError:
-        raise HTTPException(502, "El asesor tuvo un problema. Intenta de nuevo.")
+        raise HTTPException(502, "La AI tuvo un problema. Intenta de nuevo.")
+    except Exception as error:  # cualquier otra falla: mensaje claro en vez de un error genérico
+        print(f"[asesor] Error inesperado: {type(error).__name__}: {error}")
+        raise HTTPException(500, "La AI tuvo un error inesperado. Revisa la consola del servidor.")
 
 
 # ---- Tus próximos 3 ciclos ----
@@ -141,15 +152,18 @@ def api_planes(ultimo: str, lamina_cm: float = Query(gt=0, le=300),
         historico = clima_diario_historico(lat, lon)
     except requests.RequestException:
         raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
-    veredictos = {c["id"]: sembrar.evaluar(c["id"], historico)["veredicto"] for c in sembrar.lista_cultivos()}
-    return planes.generar(ultimo, lamina_cm, veredictos)
+    veredictos = {c["id"]: sembrar.evaluar(c["id"], historico, lat=lat, lon=lon)["veredicto"]
+                  for c in sembrar.lista_cultivos()}
+    return planes.generar(ultimo, lamina_cm, veredictos, dentro_region=sembrar.en_region(lat, lon))
 
 
 # ---- ¿Te alcanza el agua? ----
 
 @app.get("/api/agua")
-def api_agua(hectareas: float = Query(gt=0, le=10_000), lamina_cm: float = Query(gt=0, le=300)):
-    return agua.calcular(hectareas, lamina_cm)
+def api_agua(hectareas: float = Query(gt=0, le=10_000), lamina_cm: float = Query(gt=0, le=300),
+             lat: float | None = Query(default=None, ge=-90, le=90),
+             lon: float | None = Query(default=None, ge=-180, le=180)):
+    return agua.calcular(hectareas, lamina_cm, dentro_region=sembrar.en_region(lat, lon))
 
 
 # ---- Inicio: una ruta por tarjeta, para que la página las cargue por separado ----

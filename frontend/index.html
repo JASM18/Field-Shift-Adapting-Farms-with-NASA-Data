@@ -3,14 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Field Shift</title>
+  <title>Cropy</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="icon" type="image/png" href="img/favicon-64.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4d34">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
   <div class="pantalla">
     <header class="encabezado">
-      <p id="saludo">Buenos días</p>
+      <div class="marca">
+        <img src="img/logo-192.png" alt="" width="52" height="52">
+        <span class="marca-nombre">Cropy</span>
+        <span id="saludo" class="marca-saludo">Buenos días</span>
+      </div>
       <h1>📍 Tu parcela · <span id="nombre-lugar"></span></h1>
       <!-- Mapa interactivo: toca para mover tu parcela -->
       <div id="mapa" class="mapa-real" aria-label="Mapa de tu parcela"></div>

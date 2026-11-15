@@ -3,13 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>¿Te alcanza el agua? · Field Shift</title>
+  <title>¿Te alcanza el agua? · Cropy</title>
+  <link rel="icon" type="image/png" href="img/favicon-64.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4d34">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
   <div class="pantalla">
     <header class="encabezado">
-      <a class="volver" href="index.html">Inicio</a>
+      <div class="barra-superior">
+        <a class="volver" href="index.html">Inicio</a>
+        <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
+      </div>
       <h1>¿Te alcanza el agua?</h1>
       <p>Dos preguntas y te decimos qué cultivos caben</p>
     </header>
@@ -37,13 +43,14 @@
       </label>
       <p id="disponible" class="disponible"></p>
 
+      <p id="aviso-region" class="aviso-region" hidden></p>
       <section class="cabe">
         <h3>Esto es lo que cabe</h3>
         <div id="estado" class="estado" hidden></div>
         <ul id="lista" class="lista-cultivos"></ul>
       </section>
 
-      <p class="fuente">Cálculo: agua de riego que recomienda el INIFAP para cada cultivo en Sonora
+      <p class="fuente">Cálculo: agua de riego que recomienda el INIFAP (Sonora, México) para cada cultivo
         (Agenda Técnica Agrícola 2026) × tus hectáreas. 1 cm de lámina = 100 m³ por hectárea;
         1 millar = 1,000 m³. Toca un cultivo para ver cómo se reparten sus riegos.</p>
     </main>

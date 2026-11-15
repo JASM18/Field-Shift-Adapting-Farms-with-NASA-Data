@@ -2,6 +2,12 @@
   "_info": {
     "descripcion": "Catálogo de cultivos de Field Shift, versión 1 (Sonora). Cada dato indica su fuente.",
     "fecha": "2026-11-14",
+    "region": {
+      "nombre": "Sonora, México",
+      "descripcion": "Fechas de siembra, agua, rendimiento y riesgos de manejo vienen del INIFAP para Sonora. Fuera de esta región la app estima las fechas con el clima local de NASA POWER.",
+      "lat": [26.0, 32.6],
+      "lon": [-115.2, -108.3]
+    },
     "notas": [
       "Agua: 1 cm de lámina = 100 m³ por hectárea.",
       "Fechas de siembra en formato MM-DD.",

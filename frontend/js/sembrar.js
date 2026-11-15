@@ -18,6 +18,13 @@ function lista(contenedor, textos) {
   contenedor.replaceChildren(...textos.map((t) => crear("li", "", t)));
 }
 
+
+function mostrarAvisoRegion(texto) {
+  const el = document.getElementById("aviso-region");
+  el.textContent = texto ? `🌎 ${texto}` : "";
+  el.hidden = !texto;
+}
+
 async function mostrar(cultivoId) {
   document.querySelectorAll(".chip").forEach((b) => b.setAttribute("aria-selected", b.dataset.id === cultivoId));
   // Recordar el cultivo en la dirección (se puede compartir el enlace)
@@ -33,6 +40,7 @@ async function mostrar(cultivoId) {
   try {
     const r = await pedirApi("/api/sembrar", { cultivo: cultivoId });
 
+    mostrarAvisoRegion(r.aviso_region);
     $("veredicto").className = `veredicto ${r.tipo}`;
     $("veredicto-titulo").textContent = r.veredicto;
     $("veredicto-razon").textContent = r.razon;

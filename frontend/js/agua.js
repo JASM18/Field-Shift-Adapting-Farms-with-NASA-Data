@@ -1,5 +1,5 @@
 // Pantalla "¿Te alcanza el agua?": hectáreas × lámina asignada contra lo que pide cada cultivo.
-import { conservarUbicacionEnEnlaces } from "./comun.js";
+import { UBICACION, conservarUbicacionEnEnlaces } from "./comun.js";
 
 conservarUbicacionEnEnlaces();
 
@@ -18,6 +18,13 @@ function crear(etiqueta, clase, texto) {
 
 const ICONO = { alcanza: "✓", limitado: "!", falta: "✕", sin_dato: "?" };
 
+
+function mostrarAvisoRegion(texto) {
+  const el = document.getElementById("aviso-region");
+  el.textContent = texto ? `🌎 ${texto}` : "";
+  el.hidden = !texto;
+}
+
 let pendiente;
 function recalcular() {
   clearTimeout(pendiente);
@@ -32,7 +39,8 @@ async function calcular() {
 
   const estado = $("estado");
   try {
-    const r = await (await fetch(`/api/agua?hectareas=${ha}&lamina_cm=${cm}`)).json();
+    const r = await (await fetch(`/api/agua?hectareas=${ha}&lamina_cm=${cm}&lat=${UBICACION.lat}&lon=${UBICACION.lon}`)).json();
+    mostrarAvisoRegion(r.aviso_region);
     estado.hidden = true;
     $("disponible").textContent =
       `Tienes unos ${r.disponible_millares.toLocaleString("es-MX")} millares de m³ en total`;

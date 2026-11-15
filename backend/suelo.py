@@ -150,7 +150,7 @@ NIVELES_PH = [  # (pH menor a…, nombre, tipo de color, descripción)
     (6.6, "Un poco ácida", "bueno", "La mayoría de los cultivos la toleran bien."),
     (7.4, "Neutra", "bueno", "Ideal: casi todos los cultivos crecen bien."),
     (8.6, "Un poco alcalina", "bueno",
-     "Es lo común en zonas secas como Sonora. Muchos cultivos la toleran; algunos pueden "
+     "Es común en zonas secas. Muchos cultivos la toleran; algunos pueden "
      "tener problemas para aprovechar el hierro y el zinc."),
     (99, "Muy alcalina", "alerta",
      "Puede haber sales o sodio que dañan a los cultivos; conviene un análisis de laboratorio."),

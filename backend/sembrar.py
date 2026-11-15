@@ -26,7 +26,8 @@ DIAS_CALOR_RIESGOSOS = 10       # días de calor al final del ciclo para "con cu
 FINAL_DEL_CICLO = 0.4           # el último 40 % del ciclo (floración y llenado de grano)
 LLUVIA_SUFICIENTE = 0.8         # si la lluvia cubre el 80 % del agua que pide, no necesita riego
 AGUA_MUCHA, AGUA_MEDIA = 7000, 5000   # m³/ha para decir "mucha" / "media" / "poca"
-MARGEN_PH = 0.5                 # pasarse del pH límite por menos que esto solo genera un aviso
+MARGEN_PH = 0.5
+MAX_FECHAS_MEJORES = 3          # fuera de la región: la "mejor época" dura como máximo 3 quincenas (~6 semanas)                 # pasarse del pH límite por menos que esto solo genera un aviso
 
 
 def catalogo():
@@ -103,6 +104,10 @@ def _climatologia(historico):
         if lluvia != VALOR_VACIO:
             d["lluvia"].append(lluvia)
         d["minimas_por_año"][fecha[:4]] = tmin
+    for d in por_dia.values():
+        d["tmedia"] = mean(d["tmax"] + d["tmin"])
+        d["calor"] = mean(1 if t >= DIA_DE_CALOR else 0 for t in d["tmax"])  # probabilidad de día de calor
+        d["lluvia_media"] = mean(d["lluvia"]) if d["lluvia"] else 0
     return por_dia
 
 
@@ -111,14 +116,144 @@ def _periodo(inicio, dias):
     return [(inicio + timedelta(days=d)).timetuple().tm_yday for d in range(dias)]
 
 
-def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_textura=None, humedad=None):
+def _metricas(clima, periodo, cultivo):
+    """Clima de 30 años durante un ciclo: temperatura, días en su rango óptimo, heladas, calor y lluvia."""
+    dias = [d for d in periodo if d in clima]
+    medias = [clima[d]["tmedia"] for d in dias]
+    opt_min, opt_max = cultivo["clima"]["temp_media_optima"]
+    lim_min, lim_max = cultivo["clima"]["temp_media_limite"]
+    años = {a for d in dias for a in clima[d]["minimas_por_año"]}
+    años_helada = {a for d in dias for a, tmin in clima[d]["minimas_por_año"].items() if tmin <= 0}
+    final = dias[int(len(dias) * (1 - FINAL_DEL_CICLO)):]
+    return {
+        "temp_media": mean(medias),
+        "en_optimo": sum(opt_min <= t <= opt_max for t in medias) / len(medias),
+        "fuera_limite": any(t < lim_min - MARGEN_LIMITE or t > lim_max + MARGEN_LIMITE for t in medias),
+        "prob_helada": len(años_helada) / len(años) if años else 0,
+        "dias_calor": sum(clima[d]["calor"] for d in final),
+        "lluvia": sum(clima[d]["lluvia_media"] for d in dias),
+    }
+
+
+# ---- Región del catálogo ----
+
+def region():
+    """Región para la que el catálogo tiene datos locales (fechas, agua, riesgos del INIFAP)."""
+    return json.loads(ARCHIVO_CATALOGO.read_text())["_info"].get("region")
+
+
+def en_region(lat, lon):
+    r = region()
+    if not r or lat is None or lon is None:
+        return True
+    return r["lat"][0] <= lat <= r["lat"][1] and r["lon"][0] <= lon <= r["lon"][1]
+
+
+def aviso_fuera_de_region():
+    nombre = region()["nombre"]
+    return (f"Estás fuera de {nombre}, la región de nuestro catálogo. Las fechas de siembra se estimaron con el "
+            f"clima de tu zona (30 años de NASA POWER). El agua, el rendimiento y los riesgos de manejo son "
+            f"referencias de {nombre}: en tu zona pueden variar.")
+
+
+def _ventana_local(cultivo, clima, dias, agua_m3, sensible_helada):
+    """Fuera de la región del catálogo: busca la mejor fecha de siembra con el clima local.
+    Prueba 24 fechas (el 1 y el 16 de cada mes) y califica el ciclo que empezaría en cada una."""
+    candidatos = []
+    for mes in range(1, 13):
+        for dia in (1, 16):
+            fecha = date(2001, mes, dia)
+            m = _metricas(clima, _periodo(fecha, dias), cultivo)
+            puntaje = m["en_optimo"]
+            if sensible_helada and m["prob_helada"] >= HELADA_RIESGOSA:
+                puntaje -= 0.5
+            if m["dias_calor"] >= DIAS_CALOR_RIESGOSOS:
+                puntaje -= 0.3
+            if agua_m3:  # en zonas de temporal conviene sembrar cuando llueve
+                puntaje += 0.2 * min(1, m["lluvia"] * 10 / agua_m3)
+            valido = not m["fuera_limite"] and m["en_optimo"] >= MIN_DIAS_EN_OPTIMO
+            candidatos.append({"fecha": fecha, "puntaje": puntaje, "valido": valido})
+
+    validos = [c for c in candidatos if c["valido"]]
+    mejor = max(validos or candidatos, key=lambda c: c["puntaje"])
+    for c in candidatos:
+        if not c["valido"]:
+            c["clase"] = "no"
+        elif c["puntaje"] >= mejor["puntaje"] - 0.05:
+            c["clase"] = "mejor"
+        elif c["puntaje"] >= mejor["puntaje"] - 0.25:
+            c["clase"] = "se_puede"
+        else:
+            c["clase"] = "no"
+
+    # Fechas "mejores" seguidas alrededor de la mejor (puede cruzar de diciembre a enero)
+    i = candidatos.index(mejor)
+    ini = fin = i
+    if mejor["valido"]:
+        for _ in range(23):
+            if candidatos[(ini - 1) % 24]["clase"] != "mejor" or (ini - 1) % 24 == fin % 24:
+                break
+            ini -= 1
+        for _ in range(23):
+            if candidatos[(fin + 1) % 24]["clase"] != "mejor" or (fin + 1) % 24 == ini % 24:
+                break
+            fin += 1
+    if fin - ini + 1 > MAX_FECHAS_MEJORES:
+        centro = (ini + fin) // 2
+        nuevo_ini = centro - MAX_FECHAS_MEJORES // 2
+        nuevo_fin = nuevo_ini + MAX_FECHAS_MEJORES - 1
+        for k in range(ini, fin + 1):
+            if not nuevo_ini <= k <= nuevo_fin:
+                candidatos[k % 24]["clase"] = "se_puede"
+        ini, fin = nuevo_ini, nuevo_fin
+    f_ini = candidatos[ini % 24]["fecha"]
+    f_fin = candidatos[fin % 24]["fecha"] + timedelta(days=14)
+
+    meses = []
+    for m in range(12):
+        clases = {candidatos[2 * m]["clase"], candidatos[2 * m + 1]["clase"]}
+        meses.append("mejor" if "mejor" in clases else "se_puede" if "se_puede" in clases else "no")
+
+    ventana = {"region": "Estimada con el clima de tu zona (NASA POWER, 30 años)",
+               "sin_fecha": not mejor["valido"],
+               "inicio": f"{f_ini:%m-%d}", "fin": f"{f_fin:%m-%d}",
+               "nota": "Fechas en las que el ciclo del cultivo pasa más días en su temperatura ideal, "
+                       "con menos riesgo de helada y calor extremo." if mejor["valido"] else
+                       "En ningún momento del año el clima de tu zona queda dentro de lo que aguanta este cultivo."}
+    return ventana, meses
+
+
+def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_textura=None, humedad=None,
+            lat=None, lon=None):
     cultivo = next((c for c in catalogo() if c["id"] == cultivo_id), None)
     if cultivo is None:
         return {"error": f"No conozco el cultivo '{cultivo_id}'."}
 
     hoy = date.today()
-    ventanas = _ventanas_para(cultivo, grupo_textura)
-    principal = min(ventanas, key=lambda v: _proximo_fin(v, hoy))  # la próxima (o la que está abierta)
+    dentro = en_region(lat, lon)
+    clima = _climatologia(historico)
+
+    ciclo = cultivo["ciclo_dias"]
+    dias = ciclo["max"] or ciclo["min"] or CICLO_SI_NO_HAY_DATO
+    if ciclo["max"] is None and ciclo["min"]:
+        dias = max(dias, CICLO_SI_NO_HAY_DATO)  # ej. sorgo: primer corte a los 50 días, pero da varios
+
+    agua = cultivo["agua"]
+    agua_m3 = agua["m3_ha_tipico"] or (mean([agua["m3_ha_min"], agua["m3_ha_max"]])
+                                       if agua["m3_ha_min"] and agua["m3_ha_max"] else None)
+    sensible_helada = (cultivo["clima"]["temp_mortal_crecimiento"] is None
+                       or cultivo["clima"]["temp_mortal_crecimiento"] > -3)
+    opt_min, opt_max = cultivo["clima"]["temp_media_optima"]
+
+    # ---- ¿Cuándo sembrar? ----
+    if dentro:
+        ventanas = _ventanas_para(cultivo, grupo_textura)
+        principal = min(ventanas, key=lambda v: _proximo_fin(v, hoy))  # la próxima (o la que está abierta)
+        meses = _calendario(ventanas)
+        otras = [f"{v['region']}: {_texto_fechas(v)}" for v in cultivo["siembra"]["ventanas"] if v is not principal]
+    else:
+        principal, meses = _ventana_local(cultivo, clima, dias, agua_m3, sensible_helada)
+        otras = []
 
     # Fecha de siembra de referencia: el centro de la fecha óptima, en la próxima temporada
     ini = principal.get("optima_inicio") or principal["inicio"]
@@ -128,39 +263,14 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
     f_fin = _fecha(fin, año)
     siembra = f_ini + (f_fin - f_ini) / 2
 
-    ciclo = cultivo["ciclo_dias"]
-    dias = ciclo["max"] or ciclo["min"] or CICLO_SI_NO_HAY_DATO
-    if ciclo["max"] is None and ciclo["min"]:
-        dias = max(dias, CICLO_SI_NO_HAY_DATO)  # ej. sorgo: primer corte a los 50 días, pero da varios
-    periodo = _periodo(siembra, dias)
-
     # ---- Clima del ciclo (30 años) ----
-    clima = _climatologia(historico)
-    medias = [mean(clima[d]["tmax"] + clima[d]["tmin"]) for d in periodo if d in clima]
-    opt_min, opt_max = cultivo["clima"]["temp_media_optima"]
-    lim_min, lim_max = cultivo["clima"]["temp_media_limite"]
-    en_optimo = sum(opt_min <= t <= opt_max for t in medias) / len(medias)
-    fuera_limite = [t for t in medias if t < lim_min - MARGEN_LIMITE or t > lim_max + MARGEN_LIMITE]
-    temp_media = mean(medias)
-
-    años = {a for d in periodo if d in clima for a in clima[d]["minimas_por_año"]}
-    años_helada = {a for d in periodo if d in clima
-                   for a, tmin in clima[d]["minimas_por_año"].items() if tmin <= 0}
-    prob_helada = len(años_helada) / len(años) if años else 0
-    sensible_helada = (cultivo["clima"]["temp_mortal_crecimiento"] is None
-                       or cultivo["clima"]["temp_mortal_crecimiento"] > -3)
-
-    final = periodo[int(len(periodo) * (1 - FINAL_DEL_CICLO)):]
-    dias_calor = sum(mean(1 if t >= DIA_DE_CALOR else 0 for t in clima[d]["tmax"]) for d in final if d in clima)
-
-    lluvia_ciclo = sum(mean(clima[d]["lluvia"]) for d in periodo if d in clima and clima[d]["lluvia"])
-    agua = cultivo["agua"]
-    agua_m3 = agua["m3_ha_tipico"] or (mean([agua["m3_ha_min"], agua["m3_ha_max"]])
-                                       if agua["m3_ha_min"] and agua["m3_ha_max"] else None)
+    m = _metricas(clima, _periodo(siembra, dias), cultivo)
+    temp_media, en_optimo, prob_helada = m["temp_media"], m["en_optimo"], m["prob_helada"]
+    dias_calor, lluvia_ciclo = m["dias_calor"], m["lluvia"]
 
     # ---- Veredicto ----
     avisos = []
-    if fuera_limite or en_optimo < MIN_DIAS_EN_OPTIMO:
+    if m["fuera_limite"] or en_optimo < MIN_DIAS_EN_OPTIMO:
         veredicto, tipo = "No conviene aquí", "peligro"
         razon = (f"Durante su ciclo la temperatura media es de ~{temp_media:.0f} °C y este cultivo "
                  f"necesita {opt_min}–{opt_max} °C.")
@@ -196,13 +306,23 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
     # ---- Este año (pronóstico de 6 meses) ----
     este_año = _resumen_pronostico(pronostico, siembra, dias) if pronostico else None
 
-    # ---- Riesgos ----
+    # ---- Riesgos: los calculados con el clima local valen en cualquier lugar;
+    #      los del INIFAP solo dentro de su región ----
     riesgos = []
     if prob_helada > 0 and sensible_helada:
         riesgos.append(f"En {round(prob_helada * 10) or 1} de cada 10 años hubo al menos una helada durante su ciclo.")
     if dias_calor >= 1:
         riesgos.append(f"Al final del ciclo hay ~{dias_calor:.0f} días de más de {DIA_DE_CALOR} °C al año.")
-    riesgos += [r["texto"] for r in cultivo["clima"]["riesgos"]]
+    if not riesgos:
+        riesgos.append(f"Sin riesgo de helada ni de calor extremo (más de {DIA_DE_CALOR} °C) durante su ciclo, "
+                       f"según 30 años de NASA POWER.")
+    if dentro:
+        riesgos += [r["texto"] for r in cultivo["clima"]["riesgos"]]
+
+    referencia = "" if dentro else f" (referencia de {region()['nombre']})"
+    fuentes = {cultivo["agua"]["fuente"], cultivo["clima"]["fuente"], cultivo["suelo"]["fuente"],
+               cultivo["rendimiento"]["fuente"]}
+    fuentes.add(cultivo["siembra"]["fuente"] if dentro else "Fechas de siembra: estimadas con NASA POWER (30 años)")
 
     return {
         "id": cultivo["id"],
@@ -211,31 +331,32 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
         "tipo": tipo,
         "razon": razon,
         "avisos": avisos,
+        "dentro_region": dentro,
+        "aviso_region": None if dentro else aviso_fuera_de_region(),
         "este_año": este_año,
         "siembra": {
-            "texto": _texto_fechas(principal),
+            "texto": "Ninguna época del año le queda bien" if principal.get("sin_fecha") else _texto_fechas(principal),
             "region": principal["region"],
             "nota": principal.get("nota") or NA,
-            "otras": [f"{v['region']}: {_texto_fechas(v)}" for v in cultivo["siembra"]["ventanas"] if v is not principal],
-            "meses": [{"inicial": INICIALES[i], "mes": MESES[i], "clase": c} for i, c in enumerate(_calendario(ventanas))],
+            "otras": otras,
+            "meses": [{"inicial": INICIALES[i], "mes": MESES[i], "clase": c} for i, c in enumerate(meses)],
         },
         "agua": {
             "nivel": NA if agua_m3 is None else ("Mucha" if agua_m3 >= AGUA_MUCHA else "Media" if agua_m3 >= AGUA_MEDIA else "Poca"),
             "m3_ha": NA if agua_m3 is None else round(agua_m3),
             "lamina_cm": NA if agua_m3 is None else round(agua_m3 / 100),
             "riegos": agua["riegos"] if agua["riegos"] is not None else NA,
-            "detalle": agua["detalle"],
+            "detalle": agua["detalle"] + referencia,
             "porcentaje": None if agua_m3 is None else min(100, round(100 * agua_m3 / 12000)),
         },
         "riesgos": riesgos,
         "bueno_saber": _consejo_rotacion(cultivo),
-        "rendimiento": _texto_rendimiento(cultivo["rendimiento"]),
+        "rendimiento": _texto_rendimiento(cultivo["rendimiento"]) + referencia,
         "ciclo": f"{dias} días" + ("" if ciclo["max"] or ciclo["min"] else " (estimado; n/a en la fuente)"),
         "detalle_clima": (f"Temperatura media durante el ciclo: ~{temp_media:.0f} °C "
                           f"({en_optimo:.0%} de los días en su rango óptimo de {opt_min}–{opt_max} °C). "
                           f"Lluvia normal en el ciclo: ~{lluvia_ciclo:.0f} mm. Promedio de 30 años de NASA POWER."),
-        "fuentes": sorted({cultivo["siembra"]["fuente"], cultivo["agua"]["fuente"], cultivo["clima"]["fuente"],
-                           cultivo["suelo"]["fuente"], cultivo["rendimiento"]["fuente"]} - {None}),
+        "fuentes": sorted(fuentes - {None}),
     }
 
 

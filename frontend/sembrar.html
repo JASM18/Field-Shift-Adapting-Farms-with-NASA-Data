@@ -3,13 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>¿Qué quieres sembrar? · Field Shift</title>
+  <title>¿Qué quieres sembrar? · Cropy</title>
+  <link rel="icon" type="image/png" href="img/favicon-64.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4d34">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
   <div class="pantalla">
     <header class="encabezado">
-      <a class="volver" href="index.html">Inicio</a>
+      <div class="barra-superior">
+        <a class="volver" href="index.html">Inicio</a>
+        <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
+      </div>
       <h1>¿Qué quieres sembrar?</h1>
       <p>Toca un cultivo y te decimos si conviene aquí</p>
     </header>
@@ -19,6 +25,7 @@
       <div id="estado" class="estado">Consultando…</div>
 
       <div id="resultado" hidden>
+        <p id="aviso-region" class="aviso-region" hidden></p>
         <section id="veredicto" class="veredicto">
           <strong id="veredicto-titulo"></strong>
           <p id="veredicto-razon"></p>

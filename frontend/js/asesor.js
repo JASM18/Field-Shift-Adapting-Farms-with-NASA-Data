@@ -85,7 +85,7 @@ async function preguntar(texto) {
     });
     const datos = await respuesta.json().catch(() => ({}));
     pensando.remove();
-    if (!respuesta.ok) throw new Error(datos.detail || "El asesor no respondió.");
+    if (!respuesta.ok) throw new Error(datos.detail || `La AI no respondió (error ${respuesta.status}).`);
     agregar("assistant", datos.texto, datos.consultas);
     mensajes.push({ rol: "assistant", texto: datos.texto });
   } catch (error) {
@@ -97,6 +97,16 @@ async function preguntar(texto) {
     entrada.focus();
   }
 }
+
+// Al abrir: ¿la AI está disponible en este servidor?
+fetch("/api/asesor/estado").then((r) => r.json()).then((estado) => {
+  if (estado.disponible) return;
+  agregar("assistant", `⚠ ${estado.mensaje}`);
+  $("sugerencias").hidden = true;
+  entrada.disabled = true;
+  entrada.placeholder = "La AI no está disponible";
+  document.querySelectorAll(".chat-entrada button").forEach((b) => { b.disabled = true; });
+}).catch(() => { /* si falla esta consulta, se verá el error al preguntar */ });
 
 $("formulario").addEventListener("submit", (e) => { e.preventDefault(); preguntar(entrada.value); });
 document.querySelectorAll("#sugerencias button").forEach((b) => b.addEventListener("click", () => preguntar(b.textContent)));

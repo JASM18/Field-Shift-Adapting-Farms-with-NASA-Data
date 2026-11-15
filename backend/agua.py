@@ -4,7 +4,7 @@ con el agua que pide cada cultivo del catálogo (data/cultivos.json, valores del
 Agua disponible (m³) = hectáreas × lámina asignada (m) × 10,000
 Agua que pide un cultivo (m³) = m³ por hectárea del catálogo × hectáreas
 """
-from backend.sembrar import catalogo
+from backend.sembrar import aviso_fuera_de_region, catalogo, region
 
 NA = "n/a"
 
@@ -14,7 +14,7 @@ def _millares(m3):
     return round(m3 / 1000)
 
 
-def calcular(hectareas, lamina_cm):
+def calcular(hectareas, lamina_cm, dentro_region=True):
     disponible = hectareas * (lamina_cm / 100) * 10_000
     cultivos = []
     for c in catalogo():
@@ -58,4 +58,7 @@ def calcular(hectareas, lamina_cm):
         "disponible_m3": round(disponible),
         "disponible_millares": _millares(disponible),
         "cultivos": cultivos,
+        "aviso_region": None if dentro_region else (
+            f"Estás fuera de {region()['nombre']}: el agua que pide cada cultivo es la que recomienda el INIFAP "
+            f"para esa región. En tu zona puede ser distinta según el calor y la lluvia."),
     }

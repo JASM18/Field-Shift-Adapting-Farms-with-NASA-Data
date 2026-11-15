@@ -3,13 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tus próximos 3 ciclos · Field Shift</title>
+  <title>Tus próximos 3 ciclos · Cropy</title>
+  <link rel="icon" type="image/png" href="img/favicon-64.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4d34">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
   <div class="pantalla fondo-suave">
     <header class="encabezado">
-      <a class="volver" href="index.html">Inicio</a>
+      <div class="barra-superior">
+        <a class="volver" href="index.html">Inicio</a>
+        <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
+      </div>
       <h1>Tus próximos 3 ciclos</h1>
       <p>Compara planes antes de decidir</p>
     </header>
@@ -27,6 +33,7 @@
       </div>
 
       <div id="estado" class="estado">Armando planes…</div>
+      <p id="aviso-region" class="aviso-region" hidden></p>
       <div id="planes"></div>
 
       <p class="fuente">Los planes se arman con el catálogo de cultivos (INIFAP, FAO, ECOCROP), descartan los que

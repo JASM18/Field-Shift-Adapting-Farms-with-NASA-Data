@@ -51,6 +51,13 @@ function tarjetaPlan(p) {
   return caja;
 }
 
+
+function mostrarAvisoRegion(texto) {
+  const el = document.getElementById("aviso-region");
+  el.textContent = texto ? `🌎 ${texto}` : "";
+  el.hidden = !texto;
+}
+
 async function cargar() {
   botonesAgua.forEach((b) => b.setAttribute("aria-checked", Number(b.dataset.cm) === lamina));
   const estado = $("estado");
@@ -59,6 +66,7 @@ async function cargar() {
   estado.textContent = "Armando planes…";
   try {
     const r = await pedirApi("/api/planes", { ultimo: selector.value, lamina_cm: lamina });
+    mostrarAvisoRegion(r.aviso_region);
     $("planes").replaceChildren(...r.planes.map(tarjetaPlan));
     estado.hidden = true;
   } catch (error) {

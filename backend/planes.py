@@ -4,7 +4,7 @@ Las reglas están aquí arriba para que el equipo las ajuste.
 """
 from datetime import date
 
-from backend.sembrar import catalogo
+from backend.sembrar import catalogo, region
 
 NA = "n/a"
 DESCANSO = {"id": "descanso", "nombre": "Descanso", "familia": "—", "nitrogeno": "neutro", "agua": 0}
@@ -37,8 +37,9 @@ def _resumen(c, veredictos):
     }
 
 
-def _ciclos(hoy):
-    """Los próximos 3 ciclos, alternando Otoño-Invierno (OI) y Primavera-Verano (PV)."""
+def _ciclos(hoy, dentro_region=True):
+    """Los próximos 3 ciclos, alternando Otoño-Invierno (OI) y Primavera-Verano (PV).
+    Fuera de la región (ej. otro hemisferio) se usan nombres neutros: temporada fresca / cálida."""
     if hoy.month >= 7:
         inicio = ("OI", hoy.year)
     else:
@@ -51,6 +52,10 @@ def _ciclos(hoy):
         else:
             ciclos.append({"temporada": "PV", "etiqueta": f"Ver. {año}"})
             temporada = "OI"
+    if not dentro_region:
+        nombres = {"OI": "Temp. fresca", "PV": "Temp. cálida"}
+        for c in ciclos:
+            c["etiqueta"] = nombres[c["temporada"]]
     return ciclos
 
 
@@ -58,13 +63,13 @@ def _mejor(opciones, clave):
     return min(opciones, key=clave) if opciones else None
 
 
-def generar(ultimo_id, lamina_cm, veredictos):
+def generar(ultimo_id, lamina_cm, veredictos, dentro_region=True):
     """veredictos: {cultivo_id: veredicto de "¿Qué sembrar?"} para descartar los que no convienen."""
     cultivos = [_resumen(c, veredictos) for c in catalogo()]
     viables = [c for c in cultivos if c["veredicto"] != NO_CONVIENE]
     ultimo = next((c for c in cultivos if c["id"] == ultimo_id), DESCANSO)
     disponible = lamina_cm * 100 if lamina_cm else None   # m³/ha
-    ciclos = _ciclos(date.today())
+    ciclos = _ciclos(date.today(), dentro_region)
 
     def candidatos(temporada, evitar_familia=None):
         return [c for c in viables if c["temporada"] == temporada and c["familia"] != evitar_familia]
@@ -116,7 +121,10 @@ def generar(ultimo_id, lamina_cm, veredictos):
     recomendado = min((p for p in planes if p["aplica"]), key=puntaje)
     recomendado["recomendado"] = True
     return {"ultimo": ultimo["nombre"], "lamina_cm": lamina_cm, "ciclos": [c["etiqueta"] for c in ciclos],
-            "planes": planes}
+            "planes": planes,
+            "aviso_region": None if dentro_region else (
+                f"Estás fuera de {region()['nombre']}: las temporadas y el agua de cada cultivo son de esa región. "
+                f"Usa los planes como referencia para la rotación (familias y nitrógeno), que sí aplica en cualquier lugar.")}
 
 
 def _calificar(letra, titulo, plan, ciclos, ultimo, disponible):
