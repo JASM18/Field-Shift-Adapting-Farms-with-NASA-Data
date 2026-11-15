@@ -13,7 +13,7 @@ try {
   const clima = await pedirApi("/api/clima");
 
   document.getElementById("subtitulo").textContent =
-    `Lo que pasa normalmente cada mes (promedio de ${clima.total_años} años, ${clima.periodo})`;
+    `What usually happens each month (${clima.total_años}-year average, ${clima.periodo})`;
 
   dibujarAvisos(clima.avisos);
   dibujarMeses(clima.meses);
@@ -59,7 +59,7 @@ function dibujarMeses(meses) {
     const detalle = fila.querySelector(".mes-detalle");
     const lluvia = document.createElement("span");
     lluvia.textContent = mes.texto_lluvia;
-    lluvia.title = `${mes.lluvia_mm} mm en promedio`;
+    lluvia.title = `${mes.lluvia_mm} mm on average`;
     detalle.append(lluvia);
     for (const etiqueta of mes.etiquetas) {
       const chip = document.createElement("span");

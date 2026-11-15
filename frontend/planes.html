@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tus próximos 3 ciclos · Cropy</title>
+  <title>Your next 3 seasons · Cropy</title>
   <link rel="icon" type="image/png" href="img/favicon-64.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <meta name="theme-color" content="#1f4d34">
@@ -13,32 +13,32 @@
   <div class="pantalla fondo-suave">
     <header class="encabezado">
       <div class="barra-superior">
-        <a class="volver" href="index.html">Inicio</a>
+        <a class="volver" href="index.html">Home</a>
         <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
       </div>
-      <h1>Tus próximos 3 ciclos</h1>
-      <p>Compara planes antes de decidir</p>
+      <h1>Your next 3 seasons</h1>
+      <p>Compare plans before you decide</p>
     </header>
 
     <main>
-      <label class="campo">Lo último que sembraste
+      <label class="campo">The last thing you planted
         <select id="ultimo"></select>
       </label>
 
-      <p class="campo-titulo">El agua que sueles tener</p>
-      <div class="opciones-agua" role="radiogroup" aria-label="Agua que sueles tener">
-        <button type="button" data-cm="30" role="radio"><strong>Poca</strong><small>30 cm de lámina</small></button>
-        <button type="button" data-cm="45" role="radio" aria-checked="true"><strong>Media</strong><small>45 cm de lámina</small></button>
-        <button type="button" data-cm="70" role="radio"><strong>Completa</strong><small>70 cm de lámina</small></button>
+      <p class="campo-titulo">The water you usually get</p>
+      <div class="opciones-agua" role="radiogroup" aria-label="Water you usually get">
+        <button type="button" data-cm="30" role="radio"><strong>Low</strong><small>30 cm of water</small></button>
+        <button type="button" data-cm="45" role="radio" aria-checked="true"><strong>Medium</strong><small>45 cm of water</small></button>
+        <button type="button" data-cm="70" role="radio"><strong>Full</strong><small>70 cm of water</small></button>
       </div>
 
-      <div id="estado" class="estado">Armando planes…</div>
+      <div id="estado" class="estado">Building plans…</div>
       <p id="aviso-region" class="aviso-region" hidden></p>
       <div id="planes"></div>
 
-      <p class="fuente">Los planes se arman con el catálogo de cultivos (INIFAP, FAO, ECOCROP), descartan los que
-        no convienen con el clima de tu zona (NASA POWER) y se ordenan según tu suelo y el agua que tengas.
-        Son sugerencias: la decisión es tuya.</p>
+      <p class="fuente">Plans are built from the crop catalog (INIFAP, FAO, ECOCROP), rule out crops that
+        don't suit your area's climate (NASA POWER) and are ranked by your soil and the water you have.
+        They are suggestions: the decision is yours.</p>
     </main>
   </div>
 

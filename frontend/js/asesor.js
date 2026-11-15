@@ -39,10 +39,10 @@ function formatear(texto) {
 function hablar(texto, boton) {
   if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
   const voz = new SpeechSynthesisUtterance(texto.replace(/[*#•]/g, ""));
-  voz.lang = "es-MX";
+  voz.lang = "en-US";
   voz.rate = 0.95;
-  boton.textContent = "⏹ Detener";
-  voz.onend = voz.onerror = () => { boton.textContent = "🔊 Escuchar"; };
+  boton.textContent = "⏹ Stop";
+  voz.onend = voz.onerror = () => { boton.textContent = "🔊 Listen"; };
   speechSynthesis.speak(voz);
 }
 
@@ -52,9 +52,9 @@ function agregar(rol, texto, consultas = []) {
   else {
     burbuja.append(formatear(texto));
     const pie = crear("div", "burbuja-pie");
-    if (consultas.length) pie.append(crear("small", "", `Consulté: ${consultas.join(", ")}`));
+    if (consultas.length) pie.append(crear("small", "", `Checked: ${consultas.join(", ")}`));
     if ("speechSynthesis" in window) {
-      const boton = crear("button", "burbuja-voz", "🔊 Escuchar");
+      const boton = crear("button", "burbuja-voz", "🔊 Listen");
       boton.type = "button";
       boton.addEventListener("click", () => hablar(texto, boton));
       pie.append(boton);
@@ -74,7 +74,7 @@ async function preguntar(texto) {
   entrada.value = "";
   agregar("user", texto);
   mensajes.push({ rol: "user", texto });
-  const pensando = agregar("assistant", "Revisando los datos de tu zona…");
+  const pensando = agregar("assistant", "Checking the data for your area…");
   pensando.classList.add("pensando");
 
   try {
@@ -85,7 +85,7 @@ async function preguntar(texto) {
     });
     const datos = await respuesta.json().catch(() => ({}));
     pensando.remove();
-    if (!respuesta.ok) throw new Error(datos.detail || `La AI no respondió (error ${respuesta.status}).`);
+    if (!respuesta.ok) throw new Error(datos.detail || `The AI did not respond (error ${respuesta.status}).`);
     agregar("assistant", datos.texto, datos.consultas);
     mensajes.push({ rol: "assistant", texto: datos.texto });
   } catch (error) {
@@ -104,7 +104,7 @@ fetch("/api/asesor/estado").then((r) => r.json()).then((estado) => {
   agregar("assistant", `⚠ ${estado.mensaje}`);
   $("sugerencias").hidden = true;
   entrada.disabled = true;
-  entrada.placeholder = "La AI no está disponible";
+  entrada.placeholder = "The AI is not available";
   document.querySelectorAll(".chat-entrada button").forEach((b) => { b.disabled = true; });
 }).catch(() => { /* si falla esta consulta, se verá el error al preguntar */ });
 
@@ -118,7 +118,7 @@ if (!Reconocimiento) {
   microfono.hidden = true;
 } else {
   const rec = new Reconocimiento();
-  rec.lang = "es-MX";
+  rec.lang = "en-US";
   rec.interimResults = false;
   rec.onresult = (e) => { entrada.value = e.results[0][0].transcript; preguntar(entrada.value); };
   rec.onend = () => microfono.classList.remove("escuchando");

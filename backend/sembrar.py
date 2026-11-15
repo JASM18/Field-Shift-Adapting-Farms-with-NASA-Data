@@ -12,9 +12,9 @@ from backend.nasa_power import VALOR_VACIO
 ARCHIVO_CATALOGO = Path(__file__).parent.parent / "data" / "cultivos.json"
 NA = "n/a"
 
-MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
-         "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
-INICIALES = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"]
+MESES = ["January", "February", "March", "April", "May", "June", "July",
+         "August", "September", "October", "November", "December"]
+INICIALES = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"]
 
 # ---- Reglas ajustables ----
 CICLO_SI_NO_HAY_DATO = 120      # días, si el catálogo no trae la duración del ciclo
@@ -47,9 +47,9 @@ def _ventanas_para(cultivo, grupo_textura):
     """Elige las ventanas de siembra que aplican a la parcela.
     Si el catálogo distingue por tipo de suelo, se usa el de la parcela."""
     ventanas = cultivo["siembra"]["ventanas"]
-    por_suelo = [v for v in ventanas if "suelo" in v["region"].lower()]
+    por_suelo = [v for v in ventanas if "soil" in v["region"].lower()]
     if por_suelo:
-        clave = "arcilloso" if grupo_textura == "Arcillosa" else "aluvión"
+        clave = "clay" if grupo_textura == "Clay" else "alluvial"
         elegidas = [v for v in por_suelo if clave in v["region"].lower()]
         return elegidas or por_suelo[:1]
     return [v for v in ventanas if "hermosillo" not in v["region"].lower()] or ventanas
@@ -85,7 +85,7 @@ def _calendario(ventanas):
 
 def _texto_fechas(v):
     ini, fin = _fecha(v.get("optima_inicio") or v["inicio"], 2001), _fecha(v.get("optima_fin") or v["fin"], 2001)
-    return f"Del {ini.day} de {MESES[ini.month - 1]} al {fin.day} de {MESES[fin.month - 1]}"
+    return f"From {MESES[ini.month - 1]} {ini.day} to {MESES[fin.month - 1]} {fin.day}"
 
 
 def _climatologia(historico):
@@ -151,9 +151,9 @@ def en_region(lat, lon):
 
 def aviso_fuera_de_region():
     nombre = region()["nombre"]
-    return (f"Estás fuera de {nombre}, la región de nuestro catálogo. Las fechas de siembra se estimaron con el "
-            f"clima de tu zona (30 años de NASA POWER). El agua, el rendimiento y los riesgos de manejo son "
-            f"referencias de {nombre}: en tu zona pueden variar.")
+    return (f"You are outside {nombre}, the region covered by our catalog. Planting dates were estimated from "
+            f"your area's climate (30 years of NASA POWER). Water, yield and management risks are "
+            f"reference values from {nombre}: they may vary in your area.")
 
 
 def _ventana_local(cultivo, clima, dias, agua_m3, sensible_helada):
@@ -214,12 +214,12 @@ def _ventana_local(cultivo, clima, dias, agua_m3, sensible_helada):
         clases = {candidatos[2 * m]["clase"], candidatos[2 * m + 1]["clase"]}
         meses.append("mejor" if "mejor" in clases else "se_puede" if "se_puede" in clases else "no")
 
-    ventana = {"region": "Estimada con el clima de tu zona (NASA POWER, 30 años)",
+    ventana = {"region": "Estimated from your area's climate (NASA POWER, 30 years)",
                "sin_fecha": not mejor["valido"],
                "inicio": f"{f_ini:%m-%d}", "fin": f"{f_fin:%m-%d}",
-               "nota": "Fechas en las que el ciclo del cultivo pasa más días en su temperatura ideal, "
-                       "con menos riesgo de helada y calor extremo." if mejor["valido"] else
-                       "En ningún momento del año el clima de tu zona queda dentro de lo que aguanta este cultivo."}
+               "nota": "Dates when the crop's cycle spends the most days at its ideal temperature, "
+                       "with less risk of frost and extreme heat." if mejor["valido"] else
+                       "At no point in the year does your area's climate stay within what this crop can tolerate."}
     return ventana, meses
 
 
@@ -227,7 +227,7 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
             lat=None, lon=None):
     cultivo = next((c for c in catalogo() if c["id"] == cultivo_id), None)
     if cultivo is None:
-        return {"error": f"No conozco el cultivo '{cultivo_id}'."}
+        return {"error": f"Unknown crop '{cultivo_id}'."}
 
     hoy = date.today()
     dentro = en_region(lat, lon)
@@ -271,37 +271,37 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
     # ---- Veredicto ----
     avisos = []
     if m["fuera_limite"] or en_optimo < MIN_DIAS_EN_OPTIMO:
-        veredicto, tipo = "No conviene aquí", "peligro"
-        razon = (f"Durante su ciclo la temperatura media es de ~{temp_media:.0f} °C y este cultivo "
-                 f"necesita {opt_min}–{opt_max} °C.")
+        veredicto, tipo = "Not suitable here", "peligro"
+        razon = (f"During its cycle the average temperature is ~{temp_media:.0f} °C and this crop "
+                 f"needs {opt_min}–{opt_max} °C.")
     else:
-        razon = f"El clima de {MESES[siembra.month - 1]} a {MESES[(siembra + timedelta(days=dias)).month - 1]} le queda bien"
+        razon = f"The climate from {MESES[siembra.month - 1]} to {MESES[(siembra + timedelta(days=dias)).month - 1]} suits it"
         if prob_helada >= HELADA_RIESGOSA and sensible_helada:
-            veredicto, tipo = "Con cuidado", "alerta"
-            razon += f", pero en {round(prob_helada * 10)} de cada 10 años hubo heladas durante su ciclo."
+            veredicto, tipo = "Use caution", "alerta"
+            razon += f", but in {round(prob_helada * 10)} out of 10 years there was frost during its cycle."
         elif dias_calor >= DIAS_CALOR_RIESGOSOS:
-            veredicto, tipo = "Con cuidado", "alerta"
-            razon += f", pero al final del ciclo hay ~{dias_calor:.0f} días de más de {DIA_DE_CALOR} °C."
+            veredicto, tipo = "Use caution", "alerta"
+            razon += f", but at the end of the cycle there are ~{dias_calor:.0f} days above {DIA_DE_CALOR} °C."
         elif agua_m3 and lluvia_ciclo * 10 >= LLUVIA_SUFICIENTE * agua_m3:
-            veredicto, tipo = "Sí conviene", "bueno"
-            razon += " y la lluvia normal cubre lo que necesita."
+            veredicto, tipo = "Yes, it's suitable", "bueno"
+            razon += " and normal rainfall covers what it needs."
         else:
-            veredicto, tipo = "Sí, si tienes riego asegurado", "alerta"
-            razon += f", pero la lluvia normal (~{lluvia_ciclo:.0f} mm) no alcanza: necesita riego."
+            veredicto, tipo = "Yes, if you have reliable irrigation", "alerta"
+            razon += f", but normal rainfall (~{lluvia_ciclo:.0f} mm) isn't enough: it needs irrigation."
 
     # Suelo
     if suelo_props and suelo_props.get("phh2o") is not None:
         ph = suelo_props["phh2o"]
         p_min, p_max = cultivo["suelo"]["ph_limite"]
         if not p_min <= ph <= p_max:
-            avisos.append(f"Tu suelo tiene pH {ph:.1f} y este cultivo tolera {p_min}–{p_max}.")
+            avisos.append(f"Your soil has a pH of {ph:.1f} and this crop tolerates {p_min}–{p_max}.")
             fuera = max(p_min - ph, ph - p_max)
-            if fuera > MARGEN_PH and tipo in ("bueno", "alerta") and veredicto != "Con cuidado":
-                veredicto, tipo = "Con cuidado", "alerta"
+            if fuera > MARGEN_PH and tipo in ("bueno", "alerta") and veredicto != "Use caution":
+                veredicto, tipo = "Use caution", "alerta"
 
     # Humedad actual
     if humedad and "nombre" in humedad and humedad["indice"] <= 1:
-        avisos.append("Ahora el suelo está más seco de lo normal: necesitarás un buen riego de presiembra.")
+        avisos.append("The soil is drier than normal right now: you'll need a good pre-planting irrigation.")
 
     # ---- Este año (pronóstico de 6 meses) ----
     este_año = _resumen_pronostico(pronostico, siembra, dias) if pronostico else None
@@ -310,19 +310,19 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
     #      los del INIFAP solo dentro de su región ----
     riesgos = []
     if prob_helada > 0 and sensible_helada:
-        riesgos.append(f"En {round(prob_helada * 10) or 1} de cada 10 años hubo al menos una helada durante su ciclo.")
+        riesgos.append(f"In {round(prob_helada * 10) or 1} out of 10 years there was at least one frost during its cycle.")
     if dias_calor >= 1:
-        riesgos.append(f"Al final del ciclo hay ~{dias_calor:.0f} días de más de {DIA_DE_CALOR} °C al año.")
+        riesgos.append(f"At the end of the cycle there are ~{dias_calor:.0f} days a year above {DIA_DE_CALOR} °C.")
     if not riesgos:
-        riesgos.append(f"Sin riesgo de helada ni de calor extremo (más de {DIA_DE_CALOR} °C) durante su ciclo, "
-                       f"según 30 años de NASA POWER.")
+        riesgos.append(f"No risk of frost or extreme heat (above {DIA_DE_CALOR} °C) during its cycle, "
+                       f"according to 30 years of NASA POWER data.")
     if dentro:
         riesgos += [r["texto"] for r in cultivo["clima"]["riesgos"]]
 
-    referencia = "" if dentro else f" (referencia de {region()['nombre']})"
+    referencia = "" if dentro else f" (reference value from {region()['nombre']})"
     fuentes = {cultivo["agua"]["fuente"], cultivo["clima"]["fuente"], cultivo["suelo"]["fuente"],
                cultivo["rendimiento"]["fuente"]}
-    fuentes.add(cultivo["siembra"]["fuente"] if dentro else "Fechas de siembra: estimadas con NASA POWER (30 años)")
+    fuentes.add(cultivo["siembra"]["fuente"] if dentro else "Planting dates: estimated with NASA POWER (30 years)")
 
     return {
         "id": cultivo["id"],
@@ -335,14 +335,14 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
         "aviso_region": None if dentro else aviso_fuera_de_region(),
         "este_año": este_año,
         "siembra": {
-            "texto": "Ninguna época del año le queda bien" if principal.get("sin_fecha") else _texto_fechas(principal),
+            "texto": "No time of year suits it" if principal.get("sin_fecha") else _texto_fechas(principal),
             "region": principal["region"],
             "nota": principal.get("nota") or NA,
             "otras": otras,
             "meses": [{"inicial": INICIALES[i], "mes": MESES[i], "clase": c} for i, c in enumerate(meses)],
         },
         "agua": {
-            "nivel": NA if agua_m3 is None else ("Mucha" if agua_m3 >= AGUA_MUCHA else "Media" if agua_m3 >= AGUA_MEDIA else "Poca"),
+            "nivel": NA if agua_m3 is None else ("High" if agua_m3 >= AGUA_MUCHA else "Medium" if agua_m3 >= AGUA_MEDIA else "Low"),
             "m3_ha": NA if agua_m3 is None else round(agua_m3),
             "lamina_cm": NA if agua_m3 is None else round(agua_m3 / 100),
             "riegos": agua["riegos"] if agua["riegos"] is not None else NA,
@@ -352,10 +352,10 @@ def evaluar(cultivo_id, historico, pronostico=None, suelo_props=None, grupo_text
         "riesgos": riesgos,
         "bueno_saber": _consejo_rotacion(cultivo),
         "rendimiento": _texto_rendimiento(cultivo["rendimiento"]) + referencia,
-        "ciclo": f"{dias} días" + ("" if ciclo["max"] or ciclo["min"] else " (estimado; n/a en la fuente)"),
-        "detalle_clima": (f"Temperatura media durante el ciclo: ~{temp_media:.0f} °C "
-                          f"({en_optimo:.0%} de los días en su rango óptimo de {opt_min}–{opt_max} °C). "
-                          f"Lluvia normal en el ciclo: ~{lluvia_ciclo:.0f} mm. Promedio de 30 años de NASA POWER."),
+        "ciclo": f"{dias} days" + ("" if ciclo["max"] or ciclo["min"] else " (estimated; n/a in the source)"),
+        "detalle_clima": (f"Average temperature during the cycle: ~{temp_media:.0f} °C "
+                          f"({en_optimo:.0%} of days in its optimal range of {opt_min}–{opt_max} °C). "
+                          f"Normal rainfall during the cycle: ~{lluvia_ciclo:.0f} mm. 30-year average from NASA POWER."),
         "fuentes": sorted(fuentes - {None}),
     }
 
@@ -378,23 +378,23 @@ def _resumen_pronostico(pronostico, siembra, dias):
 
     def de_cada_10(cuantos):
         decimos = round(10 * cuantos / n)
-        return f"{decimos} de cada 10 escenarios" if decimos else "menos de 1 de cada 10 escenarios"
+        return f"{decimos} out of 10 scenarios" if decimos else "fewer than 1 out of 10 scenarios"
 
     partes = []
-    partes.append(f"helada en {de_cada_10(con_helada)}" if con_helada else "sin heladas")
+    partes.append(f"frost in {de_cada_10(con_helada)}" if con_helada else "no frost")
     if con_calor:
-        partes.append(f"5 o más días de más de {DIA_DE_CALOR} °C en {de_cada_10(con_calor)}")
-    partes.append(f"~{lluvia:.0f} mm de lluvia")
-    cubre = "todo el ciclo" if hasta >= fin_ciclo - timedelta(days=1) else f"hasta el {hasta.day} de {MESES[hasta.month - 1]}"
-    return f"Pronóstico de 6 meses de Open-Meteo/ECMWF ({cubre}): " + ", ".join(partes) + "."
+        partes.append(f"5 or more days above {DIA_DE_CALOR} °C in {de_cada_10(con_calor)}")
+    partes.append(f"~{lluvia:.0f} mm of rain")
+    cubre = "the whole cycle" if hasta >= fin_ciclo - timedelta(days=1) else f"until {MESES[hasta.month - 1]} {hasta.day}"
+    return f"6-month forecast from Open-Meteo/ECMWF ({cubre}): " + ", ".join(partes) + "."
 
 
 def _consejo_rotacion(cultivo):
     nombre = cultivo["nombre"].lower()
     consejos = {
-        "gasta_mucho": f"El {nombre} gasta mucho nitrógeno: después conviene una leguminosa como garbanzo o frijol, que lo devuelve al suelo y usa menos agua.",
-        "gasta": f"Después del {nombre} conviene una leguminosa (garbanzo o frijol) para reponer nitrógeno.",
-        "aporta": f"El {nombre} deja nitrógeno en el suelo: el cultivo que siembres después necesitará menos fertilizante.",
+        "gasta_mucho": f"{cultivo['nombre']} uses a lot of nitrogen: afterwards a legume such as chickpea or beans is a good idea, since it returns nitrogen to the soil and uses less water.",
+        "gasta": f"After {nombre}, a legume (chickpea or beans) is a good idea to replenish nitrogen.",
+        "aporta": f"{cultivo['nombre']} leaves nitrogen in the soil: the crop you plant next will need less fertilizer.",
     }
     return consejos.get(cultivo["rotacion"]["nitrogeno"], NA)
 

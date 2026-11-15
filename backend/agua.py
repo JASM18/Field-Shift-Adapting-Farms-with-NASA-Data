@@ -31,11 +31,11 @@ def calcular(hectareas, lamina_cm, dentro_region=True):
         necesita = completo * hectareas
         necesita_min = (minimo or completo) * hectareas
         if disponible >= necesita:
-            estado, texto = "alcanza", "Alcanza"
+            estado, texto = "alcanza", "Enough"
         elif disponible >= necesita_min:
-            estado, texto = "limitado", "Alcanza con lo mínimo"
+            estado, texto = "limitado", "Enough at minimum"
         else:
-            estado, texto = "falta", f"Faltan {_millares(necesita_min - disponible)}"
+            estado, texto = "falta", f"Short by {_millares(necesita_min - disponible)}"
 
         rango = minimo is not None and minimo != completo
         cultivos.append({
@@ -59,6 +59,6 @@ def calcular(hectareas, lamina_cm, dentro_region=True):
         "disponible_millares": _millares(disponible),
         "cultivos": cultivos,
         "aviso_region": None if dentro_region else (
-            f"Estás fuera de {region()['nombre']}: el agua que pide cada cultivo es la que recomienda el INIFAP "
-            f"para esa región. En tu zona puede ser distinta según el calor y la lluvia."),
+            f"You are outside {region()['nombre']}: the water each crop needs is what INIFAP recommends "
+            f"for that region. In your area it may differ depending on heat and rainfall."),
     }

@@ -25,7 +25,7 @@ export function guardarUbicacion(ubicacion) {
 const parametros = new URLSearchParams(location.search);
 const desdeDireccion = Number.isFinite(parseFloat(parametros.get("lat"))) && Number.isFinite(parseFloat(parametros.get("lon")))
   ? { lat: parseFloat(parametros.get("lat")), lon: parseFloat(parametros.get("lon")),
-      nombre: parametros.get("nombre") || "Ubicación elegida", origen: "direccion" }
+      nombre: parametros.get("nombre") || "Chosen location", origen: "direccion" }
   : null;
 const guardada = ubicacionGuardada();
 
@@ -39,7 +39,7 @@ export async function pedirApi(ruta, extra = {}) {
   const respuesta = await fetch(`${ruta}?${consulta}`);
   if (!respuesta.ok) {
     const cuerpo = await respuesta.json().catch(() => ({}));
-    throw new Error(cuerpo.detail || "No se pudieron cargar los datos.");
+    throw new Error(cuerpo.detail || "Could not load the data.");
   }
   return respuesta.json();
 }

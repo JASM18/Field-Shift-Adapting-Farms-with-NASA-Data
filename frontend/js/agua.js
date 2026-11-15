@@ -43,7 +43,7 @@ async function calcular() {
     mostrarAvisoRegion(r.aviso_region);
     estado.hidden = true;
     $("disponible").textContent =
-      `Tienes unos ${r.disponible_millares.toLocaleString("es-MX")} millares de m³ en total`;
+      `You have about ${r.disponible_millares.toLocaleString("en-US")} thousand m³ in total`;
 
     $("lista").replaceChildren(...r.cultivos.map((c) => {
       const li = crear("li", `cultivo-agua ${c.estado}${c.id === destacado ? " destacado" : ""}`);
@@ -51,13 +51,13 @@ async function calcular() {
       fila.append(crear("span", "cultivo-agua-icono", ICONO[c.estado]));
       const textos = crear("div", "cultivo-agua-textos");
       textos.append(crear("strong", "", c.nombre));
-      const necesita = c.necesita === "n/a" ? "Necesita: n/a"
-        : `Necesita unos ${c.necesita} millares` + (c.necesita_min ? ` (mínimo ${c.necesita_min})` : "");
+      const necesita = c.necesita === "n/a" ? "Needs: n/a"
+        : `Needs about ${c.necesita} thousand m³` + (c.necesita_min ? ` (minimum ${c.necesita_min})` : "");
       textos.append(crear("small", "", necesita));
       fila.append(textos, crear("span", "cultivo-agua-estado", c.texto));
       li.append(fila);
       if (c.detalle) {
-        const detalle = crear("p", "nota-chica", `${c.riegos} riegos. ${c.detalle} (${c.fuente})`);
+        const detalle = crear("p", "nota-chica", `${c.riegos} irrigations. ${c.detalle} (${c.fuente})`);
         detalle.hidden = c.id !== destacado;
         li.append(detalle);
         li.addEventListener("click", () => { detalle.hidden = !detalle.hidden; });
@@ -67,7 +67,7 @@ async function calcular() {
   } catch {
     estado.hidden = false;
     estado.className = "estado error";
-    estado.textContent = "No se pudo calcular. Revisa que el servidor esté encendido.";
+    estado.textContent = "Could not calculate. Check that the server is running.";
   }
 }
 

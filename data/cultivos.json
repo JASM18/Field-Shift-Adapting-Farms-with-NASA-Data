@@ -1,300 +1,300 @@
 {
   "_info": {
-    "descripcion": "Catálogo de cultivos de Field Shift, versión 1 (Sonora). Cada dato indica su fuente.",
+    "descripcion": "Field Shift crop catalog, version 1 (Sonora). Each value states its source.",
     "fecha": "2026-11-14",
     "region": {
-      "nombre": "Sonora, México",
-      "descripcion": "Fechas de siembra, agua, rendimiento y riesgos de manejo vienen del INIFAP para Sonora. Fuera de esta región la app estima las fechas con el clima local de NASA POWER.",
+      "nombre": "Sonora, Mexico",
+      "descripcion": "Planting dates, water, yield and management risks come from INIFAP for Sonora. Outside this region the app estimates dates from the local NASA POWER climate.",
       "lat": [26.0, 32.6],
       "lon": [-115.2, -108.3]
     },
     "notas": [
-      "Agua: 1 cm de lámina = 100 m³ por hectárea.",
-      "Fechas de siembra en formato MM-DD.",
-      "Las temperaturas de ECOCROP son la temperatura MEDIA de la temporada de cultivo, no la máxima del día.",
-      "Kc (coeficiente de cultivo) de FAO-24 Tabla 21 para viento de 0 a 5 m/s: 'humedo' = humedad relativa mínima > 70 %; 'seco' = humedad relativa mínima < 20 %. Para un clima intermedio se interpola.",
-      "null = la fuente no trae el dato; no se inventó."
+      "Water: 1 cm of irrigation depth = 100 m³ per hectare.",
+      "Planting dates in MM-DD format.",
+      "ECOCROP temperatures are the AVERAGE temperature of the growing season, not the daily maximum.",
+      "Kc (crop coefficient) from FAO-24 Table 21 for wind of 0 to 5 m/s: 'humedo' = minimum relative humidity > 70 %; 'seco' = minimum relative humidity < 20 %. For an intermediate climate, interpolate.",
+      "null = the source doesn't provide the value; it was not made up."
     ]
   },
   "fuentes": {
-    "INIFAP": "INIFAP (2026). Agenda Técnica Agrícola de Sonora 2026. Campo Experimental Norman E. Borlaug, CIRNO. Archivo: Fuentes de cultivos/14858_5722_Agenda_Técnica_Agrícola_2026_Sonora.pdf",
-    "FAO-24": "Doorenbos, J. y Pruitt, W. O. (1977, reimpr. 1992). Crop water requirements. FAO Irrigation and Drainage Paper 24. Archivo: Fuentes de cultivos/FAO_Water_requirement_Sonora.pdf",
-    "ECOCROP": "FAO. ECOCROP, base de datos de requerimientos de cultivos. https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=<id>",
-    "SIAP": "SIAP (2025). Cierre de la producción agrícola por municipio 2025. Archivo: Fuentes de cultivos/Cierre_agricola_mun_2025.csv"
+    "INIFAP": "INIFAP (2026). Agenda Técnica Agrícola de Sonora 2026. Campo Experimental Norman E. Borlaug, CIRNO. File: Fuentes de cultivos/14858_5722_Agenda_Técnica_Agrícola_2026_Sonora.pdf",
+    "FAO-24": "Doorenbos, J. and Pruitt, W. O. (1977, reprinted 1992). Crop water requirements. FAO Irrigation and Drainage Paper 24. File: Fuentes de cultivos/FAO_Water_requirement_Sonora.pdf",
+    "ECOCROP": "FAO. ECOCROP, crop requirements database. https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=<id>",
+    "SIAP": "SIAP (2025). Year-end agricultural production by municipality 2025. File: Fuentes de cultivos/Cierre_agricola_mun_2025.csv"
   },
   "cultivos": [
     {
       "id": "trigo",
-      "nombre": "Trigo",
-      "nombre_cientifico": "Triticum durum (cristalino) / Triticum aestivum (harinero)",
-      "familia": "Gramínea (Poaceae)",
-      "tipo": "grano",
-      "temporada": "Otoño-Invierno",
+      "nombre": "Wheat",
+      "nombre_cientifico": "Triticum durum (durum) / Triticum aestivum (bread wheat)",
+      "familia": "Grass (Poaceae)",
+      "tipo": "grain",
+      "temporada": "Fall-Winter",
       "superficie_sonora_2025_ha": { "valor": 59555, "fuente": "SIAP 2025" },
       "siembra": {
         "ventanas": [
-          { "region": "Sur de Sonora", "inicio": "11-15", "fin": "12-15",
-            "nota": "Se siembra hasta finales de diciembre, pero el rendimiento baja conforme se aleja de la fecha recomendada." }
+          { "region": "Southern Sonora", "inicio": "11-15", "fin": "12-15",
+            "nota": "It can be planted until late December, but yield drops the further you get from the recommended date." }
         ],
         "fuente": "INIFAP 2026, p. 125"
       },
       "agua": {
         "m3_ha_tipico": 7500, "m3_ha_min": null, "m3_ha_max": null, "riegos": 4,
-        "detalle": "Presiembra; 1er auxilio ~50 días después de la siembra (amacollamiento-encañe); 2º ~30 días después (inicio de espigamiento); 3º ~20 días después (llenado de grano).",
+        "detalle": "Pre-planting; 1st follow-up irrigation ~50 days after planting (tillering-jointing); 2nd ~30 days later (start of heading); 3rd ~20 days later (grain filling).",
         "fuente": "INIFAP 2026, p. 125"
       },
       "kc": { "media_humedo": 1.05, "final_humedo": 0.25, "media_seco": 1.15, "final_seco": 0.2, "fuente": "FAO-24, Tabla 21 (Wheat)" },
       "clima": {
         "temp_media_optima": [17, 25], "temp_media_limite": [6, 30], "temp_mortal_crecimiento": null,
         "riesgos": [
-          { "texto": "Heladas de finales de diciembre a febrero en el sur de Sonora.", "fuente": "INIFAP 2026, p. 124" }
+          { "texto": "Frost from late December to February in southern Sonora.", "fuente": "INIFAP 2026, p. 124" }
         ],
         "fuente": "ECOCROP id 10582 (Triticum durum)"
       },
-      "suelo": { "ph_optimo": [6.0, 7.0], "ph_limite": [5.5, 8.5], "salinidad_tolerada": "baja (<4 dS/m)", "fuente": "ECOCROP id 10582" },
+      "suelo": { "ph_optimo": [6.0, 7.0], "ph_limite": [5.5, 8.5], "salinidad_tolerada": "low (<4 dS/m)", "fuente": "ECOCROP id 10582" },
       "rotacion": {
         "nitrogeno": "gasta_mucho",
-        "detalle": "Requiere ~30 kg de nitrógeno por tonelada de grano (~210 kg N/ha para 7 t/ha).",
+        "detalle": "Requires ~30 kg of nitrogen per tonne of grain (~210 kg N/ha for 7 t/ha).",
         "fuente": "INIFAP 2026, p. 125"
       },
-      "rendimiento": { "promedio": 7.0, "rango": [6.0, 7.5], "unidad": "t/ha de grano", "fuente": "INIFAP 2026, p. 132" },
-      "ciclo_dias": { "min": 104, "max": 136, "nota": "Días a madurez fisiológica según la variedad.", "fuente": "INIFAP 2026, Cuadro 41" },
-      "notas": ["El trigo cristalino ocupó 75 % de la superficie de trigo de Sonora en el ciclo 2023-2024 (INIFAP 2026, p. 124)."]
+      "rendimiento": { "promedio": 7.0, "rango": [6.0, 7.5], "unidad": "t/ha of grain", "fuente": "INIFAP 2026, p. 132" },
+      "ciclo_dias": { "min": 104, "max": 136, "nota": "Days to physiological maturity depending on the variety.", "fuente": "INIFAP 2026, Table 41" },
+      "notas": ["Durum wheat covered 75 % of Sonora's wheat area in the 2023-2024 season (INIFAP 2026, p. 124)."]
     },
     {
       "id": "maiz",
-      "nombre": "Maíz",
+      "nombre": "Corn",
       "nombre_cientifico": "Zea mays",
-      "familia": "Gramínea (Poaceae)",
-      "tipo": "grano",
-      "temporada": "Otoño-Invierno",
-      "superficie_sonora_2025_ha": { "valor": 11987, "fuente": "SIAP 2025 (maíz grano; 9,762 ha en OI y 2,225 ha en PV)" },
+      "familia": "Grass (Poaceae)",
+      "tipo": "grain",
+      "temporada": "Fall-Winter",
+      "superficie_sonora_2025_ha": { "valor": 11987, "fuente": "SIAP 2025 (grain corn; 9,762 ha in fall-winter and 2,225 ha in spring-summer)" },
       "siembra": {
         "ventanas": [
-          { "region": "Sur de Sonora (ciclo OI)", "inicio": "11-15", "fin": "12-15",
-            "nota": "Siembras de enero y principios de febrero tienen menos riesgo de helada, pero quedan expuestas al calor de abril y mayo, que puede reducir mucho el rendimiento." }
+          { "region": "Southern Sonora (fall-winter season)", "inicio": "11-15", "fin": "12-15",
+            "nota": "Plantings in January and early February have less frost risk, but are exposed to the April and May heat, which can greatly reduce yield." }
         ],
         "fuente": "INIFAP 2026, pp. 92-93"
       },
       "agua": {
         "m3_ha_tipico": 9500, "m3_ha_min": null, "m3_ha_max": null, "riegos": 6,
-        "detalle": "Presiembra de ~25 cm (10 a 15 días antes de sembrar) y 5 auxilios de ~14 cm, en las etapas V6, V11, R1, R3 y R5.",
+        "detalle": "Pre-planting irrigation of ~25 cm (10 to 15 days before planting) and 5 follow-up irrigations of ~14 cm, at stages V6, V11, R1, R3 and R5.",
         "fuente": "INIFAP 2026, p. 93"
       },
       "kc": { "media_humedo": 1.05, "final_humedo": 0.55, "media_seco": 1.15, "final_seco": 0.6, "fuente": "FAO-24, Tabla 21 (Corn grain)" },
       "clima": {
         "temp_media_optima": [18, 33], "temp_media_limite": [10, 47], "temp_mortal_crecimiento": null,
         "riesgos": [
-          { "texto": "Heladas de finales de diciembre a febrero.", "fuente": "INIFAP 2026, p. 91" },
-          { "texto": "Calor de abril y mayo en siembras tardías.", "fuente": "INIFAP 2026, p. 93" }
+          { "texto": "Frost from late December to February.", "fuente": "INIFAP 2026, p. 91" },
+          { "texto": "April and May heat in late plantings.", "fuente": "INIFAP 2026, p. 93" }
         ],
         "fuente": "ECOCROP id 2175"
       },
-      "suelo": { "ph_optimo": [5.0, 7.0], "ph_limite": [4.5, 8.5], "salinidad_tolerada": "media (4-10 dS/m)", "fuente": "ECOCROP id 2175" },
+      "suelo": { "ph_optimo": [5.0, 7.0], "ph_limite": [4.5, 8.5], "salinidad_tolerada": "medium (4-10 dS/m)", "fuente": "ECOCROP id 2175" },
       "rotacion": {
         "nitrogeno": "gasta_mucho",
-        "detalle": "Programa de fertilización de la Agenda: más de 280 kg de N/ha repartidos en presiembra y riegos de auxilio.",
+        "detalle": "The Agenda's fertilization program: more than 280 kg of N/ha split between pre-planting and follow-up irrigations.",
         "fuente": "INIFAP 2026, p. 94"
       },
-      "rendimiento": { "promedio": 12.0, "rango": [12.0, 15.0], "unidad": "t/ha de grano (riego)", "fuente": "INIFAP 2026, p. 100" },
-      "ciclo_dias": { "min": null, "max": null, "nota": "La Agenda no da la duración total del ciclo.", "fuente": null },
+      "rendimiento": { "promedio": 12.0, "rango": [12.0, 15.0], "unidad": "t/ha of grain (irrigated)", "fuente": "INIFAP 2026, p. 100" },
+      "ciclo_dias": { "min": null, "max": null, "nota": "The Agenda doesn't give the total cycle length.", "fuente": null },
       "notas": []
     },
     {
       "id": "cartamo",
-      "nombre": "Cártamo",
+      "nombre": "Safflower",
       "nombre_cientifico": "Carthamus tinctorius",
-      "familia": "Oleaginosa (Asteraceae)",
-      "tipo": "grano oleaginoso",
-      "temporada": "Otoño-Invierno",
+      "familia": "Oilseed (Asteraceae)",
+      "tipo": "oilseed grain",
+      "temporada": "Fall-Winter",
       "superficie_sonora_2025_ha": { "valor": 14842, "fuente": "SIAP 2025" },
       "siembra": {
         "ventanas": [
-          { "region": "Suelos de barrial", "inicio": "11-15", "fin": "02-15", "optima_inicio": "12-01", "optima_fin": "01-15",
-            "nota": "Las siembras tardías favorecen plagas como el barrenador del tallo y las chinches." }
+          { "region": "Barrial (heavy) soils", "inicio": "11-15", "fin": "02-15", "optima_inicio": "12-01", "optima_fin": "01-15",
+            "nota": "Late plantings favor pests such as the stem borer and stink bugs." }
         ],
-        "fuente": "INIFAP 2026, pp. 46 y 48-49"
+        "fuente": "INIFAP 2026, pp. 46 and 48-49"
       },
       "agua": {
         "m3_ha_tipico": 6000, "m3_ha_min": 3000, "m3_ha_max": 6100, "riegos": 4,
-        "detalle": "Normal: presiembra de 20-25 cm y 3 auxilios de ~12 cm. Con poca agua: presiembra de ~20 cm y 1 o 2 auxilios de 10 cm.",
+        "detalle": "Normal: pre-planting irrigation of 20-25 cm and 3 follow-up irrigations of ~12 cm. With little water: pre-planting of ~20 cm and 1 or 2 follow-ups of 10 cm.",
         "fuente": "INIFAP 2026, pp. 47-48"
       },
       "kc": { "media_humedo": 1.05, "final_humedo": 0.25, "media_seco": 1.15, "final_seco": 0.2, "fuente": "FAO-24, Tabla 21 (Safflower)" },
       "clima": {
         "temp_media_optima": [20, 32], "temp_media_limite": [5, 45], "temp_mortal_crecimiento": -2,
         "riesgos": [
-          { "texto": "Enfermedades (pudrición de raíz, falsa cenicilla, mancha foliar) con días nublados, lluvia, humedad alta o riegos pesados.", "fuente": "INIFAP 2026, p. 51" }
+          { "texto": "Diseases (root rot, downy mildew, leaf spot) with cloudy days, rain, high humidity or heavy irrigation.", "fuente": "INIFAP 2026, p. 51" }
         ],
         "fuente": "ECOCROP id 2514"
       },
-      "suelo": { "ph_optimo": [6.5, 7.5], "ph_limite": [5.0, 8.0], "salinidad_tolerada": "media (4-10 dS/m)", "fuente": "ECOCROP id 2514" },
+      "suelo": { "ph_optimo": [6.5, 7.5], "ph_limite": [5.0, 8.0], "salinidad_tolerada": "medium (4-10 dS/m)", "fuente": "ECOCROP id 2514" },
       "rotacion": {
         "nitrogeno": "gasta",
-        "detalle": "La dosis de nitrógeno depende del cultivo anterior y del tipo de suelo (la Agenda trae un cuadro por rotación).",
+        "detalle": "The nitrogen dose depends on the previous crop and the soil type (the Agenda has a table by rotation).",
         "fuente": "INIFAP 2026, p. 48"
       },
-      "rendimiento": { "promedio": 2.2, "rango": null, "unidad": "t/ha de grano (38 % de aceite)", "fuente": "INIFAP 2026, p. 54" },
-      "ciclo_dias": { "min": 137, "max": 141, "nota": "Días a madurez fisiológica de las variedades comerciales; la cosecha va de 140 a 190 días después de la siembra.", "fuente": "INIFAP 2026, Cuadro 12 y p. 54" },
-      "notas": ["Aguanta poca agua: con 1 o 2 auxilios sigue siendo viable (INIFAP 2026, pp. 47-48)."]
+      "rendimiento": { "promedio": 2.2, "rango": null, "unidad": "t/ha of grain (38 % oil)", "fuente": "INIFAP 2026, p. 54" },
+      "ciclo_dias": { "min": 137, "max": 141, "nota": "Days to physiological maturity for commercial varieties; harvest is 140 to 190 days after planting.", "fuente": "INIFAP 2026, Table 12 and p. 54" },
+      "notas": ["It tolerates little water: with 1 or 2 follow-up irrigations it is still viable (INIFAP 2026, pp. 47-48)."]
     },
     {
       "id": "garbanzo",
-      "nombre": "Garbanzo",
+      "nombre": "Chickpea",
       "nombre_cientifico": "Cicer arietinum",
-      "familia": "Leguminosa (Fabaceae)",
-      "tipo": "grano",
-      "temporada": "Otoño-Invierno",
+      "familia": "Legume (Fabaceae)",
+      "tipo": "grain",
+      "temporada": "Fall-Winter",
       "superficie_sonora_2025_ha": { "valor": 10326, "fuente": "SIAP 2025" },
       "siembra": {
         "ventanas": [
-          { "region": "Sur de Sonora, suelo arcilloso", "inicio": "11-15", "fin": "12-20", "nota": null },
-          { "region": "Sur de Sonora, suelo de aluvión", "inicio": "12-15", "fin": "01-31", "nota": null },
-          { "region": "Costa de Hermosillo", "inicio": "11-25", "fin": "12-31",
-            "nota": "Siembras más tempranas tienen más riesgo de helada; las tardías, de calor y plagas, y dan grano más chico." }
+          { "region": "Southern Sonora, clay soil", "inicio": "11-15", "fin": "12-20", "nota": null },
+          { "region": "Southern Sonora, alluvial soil", "inicio": "12-15", "fin": "01-31", "nota": null },
+          { "region": "Hermosillo coast", "inicio": "11-25", "fin": "12-31",
+            "nota": "Earlier plantings have more frost risk; later ones, more heat and pests, and produce smaller grain." }
         ],
         "fuente": "INIFAP 2026, p. 79"
       },
       "agua": {
         "m3_ha_tipico": 4200, "m3_ha_min": 4000, "m3_ha_max": 4500, "riegos": 3,
-        "detalle": "Presiembra y 2 auxilios (calendario 0-45-65 o 0-55-75 días según el suelo): lámina total de ~40 a 44 cm.",
+        "detalle": "Pre-planting and 2 follow-up irrigations (schedule 0-45-65 or 0-55-75 days depending on the soil): total depth of ~40 to 44 cm.",
         "fuente": "INIFAP 2026, p. 80"
       },
       "kc": { "media_humedo": 1.05, "final_humedo": 0.3, "media_seco": 1.15, "final_seco": 0.25, "fuente": "FAO-24, Tabla 21 (Beans dry / Pulses)" },
       "clima": {
         "temp_media_optima": [15, 29], "temp_media_limite": [7, 35], "temp_mortal_crecimiento": 0,
         "riesgos": [
-          { "texto": "Heladas en siembras tempranas y calor en siembras tardías.", "fuente": "INIFAP 2026, p. 79" },
-          { "texto": "Pudriciones de raíz con encharcamiento: usar riegos ligeros en suelos arcillosos.", "fuente": "INIFAP 2026, pp. 77 y 82" }
+          { "texto": "Frost in early plantings and heat in late plantings.", "fuente": "INIFAP 2026, p. 79" },
+          { "texto": "Root rot with waterlogging: use light irrigations on clay soils.", "fuente": "INIFAP 2026, pp. 77 and 82" }
         ],
         "fuente": "ECOCROP id 2479"
       },
-      "suelo": { "ph_optimo": [6.0, 8.5], "ph_limite": [4.7, 9.5], "salinidad_tolerada": "media (4-10 dS/m)", "fuente": "ECOCROP id 2479" },
+      "suelo": { "ph_optimo": [6.0, 8.5], "ph_limite": [4.7, 9.5], "salinidad_tolerada": "medium (4-10 dS/m)", "fuente": "ECOCROP id 2479" },
       "rotacion": {
         "nitrogeno": "aporta",
-        "detalle": "Leguminosa: fija nitrógeno del aire, lo que beneficia al cultivo siguiente. Pendiente: citar con las guías de rotación del equipo.",
-        "fuente": "Conocimiento agronómico general (por confirmar con referencia)"
+        "detalle": "Legume: fixes nitrogen from the air, which benefits the next crop. Pending: cite with the team's rotation guides.",
+        "fuente": "General agronomic knowledge (to be confirmed with a reference)"
       },
-      "rendimiento": { "promedio": 2.25, "rango": [2.0, 2.5], "unidad": "t/ha de grano (riego rodado; 3.0-3.5 con goteo)", "fuente": "INIFAP 2026, p. 86" },
-      "ciclo_dias": { "min": 125, "max": 140, "nota": "Ciclo vegetativo de las variedades de la región.", "fuente": "INIFAP 2026, p. 85" },
-      "notas": ["La rotación con cultivos que no hospedan los hongos de raíz ayuda a controlarlos (INIFAP 2026, p. 82)."]
+      "rendimiento": { "promedio": 2.25, "rango": [2.0, 2.5], "unidad": "t/ha of grain (furrow irrigation; 3.0-3.5 with drip)", "fuente": "INIFAP 2026, p. 86" },
+      "ciclo_dias": { "min": 125, "max": 140, "nota": "Growing cycle of the region's varieties.", "fuente": "INIFAP 2026, p. 85" },
+      "notas": ["Rotating with crops that don't host root fungi helps control them (INIFAP 2026, p. 82)."]
     },
     {
       "id": "frijol",
-      "nombre": "Frijol",
+      "nombre": "Beans",
       "nombre_cientifico": "Phaseolus vulgaris",
-      "familia": "Leguminosa (Fabaceae)",
-      "tipo": "grano",
-      "temporada": "Otoño-Invierno (también Primavera-Verano)",
-      "superficie_sonora_2025_ha": { "valor": 3424, "fuente": "SIAP 2025 (2,183 ha en OI y 1,241 ha en PV)" },
+      "familia": "Legume (Fabaceae)",
+      "tipo": "grain",
+      "temporada": "Fall-Winter (also Spring-Summer)",
+      "superficie_sonora_2025_ha": { "valor": 3424, "fuente": "SIAP 2025 (2,183 ha in fall-winter and 1,241 ha in spring-summer)" },
       "siembra": {
         "ventanas": [
-          { "region": "Sonora, ciclo OI", "inicio": "09-15", "fin": "10-31",
-            "nota": "Las siembras después del 5 de octubre tienen riesgo de helada." },
-          { "region": "Sonora, ciclo PV", "inicio": "01-24", "fin": "02-07",
-            "nota": "Periodo óptimo: última semana de enero y primera de febrero." }
+          { "region": "Sonora, fall-winter season", "inicio": "09-15", "fin": "10-31",
+            "nota": "Plantings after October 5 are at risk of frost." },
+          { "region": "Sonora, spring-summer season", "inicio": "01-24", "fin": "02-07",
+            "nota": "Optimal period: last week of January and first week of February." }
         ],
         "fuente": "INIFAP 2026, pp. 65-66"
       },
       "agua": {
         "m3_ha_tipico": 4250, "m3_ha_min": 4000, "m3_ha_max": 4500, "riegos": 5,
-        "detalle": "Presiembra y 4 auxilios a los 40, 60, 75 y 85 días (láminas de 15, 12, 10 y 8 cm); lámina total de 40 a 45 cm.",
+        "detalle": "Pre-planting and 4 follow-up irrigations at 40, 60, 75 and 85 days (depths of 15, 12, 10 and 8 cm); total depth of 40 to 45 cm.",
         "fuente": "INIFAP 2026, p. 67"
       },
       "kc": { "media_humedo": 1.05, "final_humedo": 0.3, "media_seco": 1.15, "final_seco": 0.25, "fuente": "FAO-24, Tabla 21 (Beans dry)" },
       "clima": {
         "temp_media_optima": [16, 25], "temp_media_limite": [7, 32], "temp_mortal_crecimiento": null,
         "riesgos": [
-          { "texto": "Heladas en siembras después del 5 de octubre.", "fuente": "INIFAP 2026, p. 65" },
-          { "texto": "Daño por temperaturas mayores a 30 °C en la etapa reproductiva.", "fuente": "INIFAP 2026, p. 66" }
+          { "texto": "Frost in plantings after October 5.", "fuente": "INIFAP 2026, p. 65" },
+          { "texto": "Damage from temperatures above 30 °C during the reproductive stage.", "fuente": "INIFAP 2026, p. 66" }
         ],
         "fuente": "ECOCROP id 1668"
       },
-      "suelo": { "ph_optimo": [5.5, 7.5], "ph_limite": [4.0, 9.0], "salinidad_tolerada": "baja (<4 dS/m)", "fuente": "ECOCROP id 1668" },
+      "suelo": { "ph_optimo": [5.5, 7.5], "ph_limite": [4.0, 9.0], "salinidad_tolerada": "low (<4 dS/m)", "fuente": "ECOCROP id 1668" },
       "rotacion": {
         "nitrogeno": "aporta",
-        "detalle": "Leguminosa: fija nitrógeno del aire. Aun así, la Agenda recomienda 90-120 kg de N/ha. La rotación con gramíneas ayuda a reducir enfermedades.",
-        "fuente": "INIFAP 2026, pp. 67 y 69; fijación de N: conocimiento agronómico general (por confirmar)"
+        "detalle": "Legume: fixes nitrogen from the air. Even so, the Agenda recommends 90-120 kg of N/ha. Rotating with grasses helps reduce diseases.",
+        "fuente": "INIFAP 2026, pp. 67 and 69; N fixation: general agronomic knowledge (to be confirmed)"
       },
-      "rendimiento": { "promedio": 2.2, "rango": null, "potencial": [2.5, 3.5], "unidad": "t/ha de grano (promedio en Sonora 2020-2024; potencial con buen manejo del agua)", "fuente": "INIFAP 2026, pp. 64 y 67" },
-      "ciclo_dias": { "min": 115, "max": 125, "nota": "Ciclo OI de siembra a corte (en PV, 100 a 108 días).", "fuente": "INIFAP 2026, p. 72" },
+      "rendimiento": { "promedio": 2.2, "rango": null, "potencial": [2.5, 3.5], "unidad": "t/ha of grain (Sonora average 2020-2024; potential with good water management)", "fuente": "INIFAP 2026, pp. 64 and 67" },
+      "ciclo_dias": { "min": 115, "max": 125, "nota": "Fall-winter cycle from planting to harvest (in spring-summer, 100 to 108 days).", "fuente": "INIFAP 2026, p. 72" },
       "notas": []
     },
     {
       "id": "sorgo",
-      "nombre": "Sorgo forrajero",
+      "nombre": "Forage sorghum",
       "nombre_cientifico": "Sorghum bicolor",
-      "familia": "Gramínea (Poaceae)",
-      "tipo": "forraje",
-      "temporada": "Primavera-Verano",
-      "superficie_sonora_2025_ha": { "valor": 11836, "fuente": "SIAP 2025 (sorgo forrajero en verde; además 1,751 ha de sorgo grano)" },
+      "familia": "Grass (Poaceae)",
+      "tipo": "forage",
+      "temporada": "Spring-Summer",
+      "superficie_sonora_2025_ha": { "valor": 11836, "fuente": "SIAP 2025 (green forage sorghum; plus 1,751 ha of grain sorghum)" },
       "siembra": {
         "ventanas": [
-          { "region": "Sonora (según la región)", "inicio": "03-01", "fin": "06-30",
-            "nota": "Crece a partir de 16 °C; la temperatura óptima es de 25 °C." }
+          { "region": "Sonora (depending on the region)", "inicio": "03-01", "fin": "06-30",
+            "nota": "It grows from 16 °C up; the optimal temperature is 25 °C." }
         ],
         "fuente": "INIFAP 2026, p. 119"
       },
       "agua": {
         "m3_ha_tipico": null, "m3_ha_min": 8000, "m3_ha_max": 15000, "riegos": null,
-        "detalle": "Lámina de 80 a 150 cm según la textura del suelo. Necesita menos agua que el maíz, pero es sensible a la falta de agua en crecimiento inicial, embuche, floración y llenado de grano.",
+        "detalle": "Depth of 80 to 150 cm depending on soil texture. It needs less water than corn, but is sensitive to water shortage during early growth, boot stage, flowering and grain filling.",
         "fuente": "INIFAP 2026, p. 120"
       },
       "kc": { "media_humedo": 1.0, "final_humedo": 0.5, "media_seco": 1.1, "final_seco": 0.55, "fuente": "FAO-24, Tabla 21 (Sorghum)" },
       "clima": {
         "temp_media_optima": [22, 35], "temp_media_limite": [8, 40], "temp_mortal_crecimiento": null,
         "riesgos": [
-          { "texto": "No crece con temperaturas menores a 16 °C: es cultivo de verano.", "fuente": "INIFAP 2026, p. 119" }
+          { "texto": "It doesn't grow below 16 °C: it's a summer crop.", "fuente": "INIFAP 2026, p. 119" }
         ],
         "fuente": "ECOCROP id 48747"
       },
-      "suelo": { "ph_optimo": [5.5, 7.5], "ph_limite": [5.0, 8.0], "salinidad_tolerada": "media (4-10 dS/m)", "fuente": "ECOCROP id 48747" },
+      "suelo": { "ph_optimo": [5.5, 7.5], "ph_limite": [5.0, 8.0], "salinidad_tolerada": "medium (4-10 dS/m)", "fuente": "ECOCROP id 48747" },
       "rotacion": {
         "nitrogeno": "gasta",
-        "detalle": "80 a 100 kg de N/ha, más 50 kg de N/ha después de cada pastoreo.",
+        "detalle": "80 to 100 kg of N/ha, plus 50 kg of N/ha after each grazing.",
         "fuente": "INIFAP 2026, p. 120"
       },
-      "rendimiento": { "promedio": 30, "rango": null, "unidad": "t/ha de forraje verde en el primer corte (~50 días)", "fuente": "INIFAP 2026, p. 118" },
-      "ciclo_dias": { "min": 50, "max": null, "nota": "Primer corte a los ~50 días; puede dar varios cortes.", "fuente": "INIFAP 2026, p. 118" },
-      "notas": ["Es el único cultivo de verano del catálogo."]
+      "rendimiento": { "promedio": 30, "rango": null, "unidad": "t/ha of green forage at the first cut (~50 days)", "fuente": "INIFAP 2026, p. 118" },
+      "ciclo_dias": { "min": 50, "max": null, "nota": "First cut at ~50 days; it can give several cuts.", "fuente": "INIFAP 2026, p. 118" },
+      "notas": ["It's the only summer crop in the catalog."]
     },
     {
       "id": "canola",
       "nombre": "Canola",
       "nombre_cientifico": "Brassica napus",
-      "familia": "Oleaginosa (Brassicaceae / crucífera)",
-      "tipo": "grano oleaginoso",
-      "temporada": "Otoño-Invierno",
+      "familia": "Oilseed (Brassicaceae / crucifer)",
+      "tipo": "oilseed grain",
+      "temporada": "Fall-Winter",
       "superficie_sonora_2025_ha": { "valor": 15, "fuente": "SIAP 2025" },
       "siembra": {
         "ventanas": [
           { "region": "Sonora", "inicio": "11-01", "fin": "12-15",
-            "nota": "En siembras tardías aumenta el daño de pulgones, se acorta el ciclo y baja el rendimiento de grano y aceite." }
+            "nota": "In late plantings aphid damage increases, the cycle shortens and grain and oil yield drop." }
         ],
         "fuente": "INIFAP 2026, p. 40"
       },
       "agua": {
         "m3_ha_tipico": 4000, "m3_ha_min": 3500, "m3_ha_max": 5400, "riegos": 2,
-        "detalle": "Presiembra lo más pesada posible (25-30 cm) y, si hace falta, un auxilio de 10-12 cm al inicio de floración (55-65 días). En suelos que retienen poca humedad, un 2º auxilio al final de la floración (89-95 días).",
+        "detalle": "The heaviest possible pre-planting irrigation (25-30 cm) and, if needed, a 10-12 cm follow-up at the start of flowering (55-65 days). On soils that hold little moisture, a 2nd follow-up at the end of flowering (89-95 days).",
         "fuente": "INIFAP 2026, p. 41"
       },
-      "kc": { "media_humedo": null, "final_humedo": null, "media_seco": null, "final_seco": null, "fuente": "FAO-24 no incluye canola" },
+      "kc": { "media_humedo": null, "final_humedo": null, "media_seco": null, "final_seco": null, "fuente": "FAO-24 doesn't include canola" },
       "clima": {
         "temp_media_optima": [15, 25], "temp_media_limite": [5, 41], "temp_mortal_crecimiento": -6,
         "riesgos": [
-          { "texto": "Pulgones en siembras tardías durante la floración.", "fuente": "INIFAP 2026, pp. 40 y 42" }
+          { "texto": "Aphids in late plantings during flowering.", "fuente": "INIFAP 2026, pp. 40 and 42" }
         ],
         "fuente": "ECOCROP id 549"
       },
-      "suelo": { "ph_optimo": [6.5, 7.6], "ph_limite": [5.5, 8.0], "salinidad_tolerada": "media (4-10 dS/m)", "fuente": "ECOCROP id 549" },
+      "suelo": { "ph_optimo": [6.5, 7.6], "ph_limite": [5.5, 8.0], "salinidad_tolerada": "medium (4-10 dS/m)", "fuente": "ECOCROP id 549" },
       "rotacion": {
         "nitrogeno": "gasta",
-        "detalle": "El nitrógeno se aplica 50 % en presiembra y 50 % en roseta; no después.",
+        "detalle": "Nitrogen is applied 50 % at pre-planting and 50 % at rosette; not later.",
         "fuente": "INIFAP 2026, p. 41"
       },
-      "rendimiento": { "promedio": null, "rango": [3.5, 4.0], "unidad": "t/ha de grano (potencial de variedades precoces)", "fuente": "INIFAP 2026, p. 40" },
-      "ciclo_dias": { "min": null, "max": null, "nota": "La Agenda no da la duración total del ciclo.", "fuente": null },
-      "notas": ["Casi no se siembra en Sonora (15 ha en 2025)."]
+      "rendimiento": { "promedio": null, "rango": [3.5, 4.0], "unidad": "t/ha of grain (potential of early varieties)", "fuente": "INIFAP 2026, p. 40" },
+      "ciclo_dias": { "min": null, "max": null, "nota": "The Agenda doesn't give the total cycle length.", "fuente": null },
+      "notas": ["It's hardly planted in Sonora (15 ha in 2025)."]
     }
   ]
 }

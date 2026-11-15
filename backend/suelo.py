@@ -14,11 +14,11 @@ from backend.nasa_power import VALOR_VACIO
 # Se compara la humedad de los últimos 7 días con la de la misma época en 30 años.
 # "Percentil" = de cada 100 años parecidos, en cuántos hubo menos humedad que ahora.
 NIVELES_HUMEDAD = [  # (percentil menor a…, nombre, qué hacer)
-    (10, "Muy seca", "si siembras ahora, necesitarás un riego de presiembra abundante."),
-    (30, "Seca", "si siembras ahora, necesitarás un riego de presiembra."),
-    (70, "Normal", "la humedad está como siempre en esta época del año."),
-    (90, "Húmeda", "buen momento para sembrar si la tierra no está encharcada."),
-    (101, "Muy húmeda", "espera a que la tierra oree antes de meter maquinaria."),
+    (10, "Very dry", "if you plant now, you'll need a heavy pre-planting irrigation."),
+    (30, "Dry", "if you plant now, you'll need a pre-planting irrigation."),
+    (70, "Normal", "moisture is as usual for this time of year."),
+    (90, "Moist", "good time to plant as long as the soil isn't waterlogged."),
+    (101, "Very wet", "wait for the soil to dry out before bringing in machinery."),
 ]
 VENTANA_DIAS = 15  # días antes y después de la fecha para definir "la misma época"
 
@@ -26,7 +26,7 @@ VENTANA_DIAS = 15  # días antes y después de la fecha para definir "la misma �
 def humedad(historico, reciente):
     validos = [(f, v) for f, v in sorted(reciente.items()) if v != VALOR_VACIO]
     if not validos:
-        return {"error": "Sin datos recientes de humedad."}
+        return {"error": "No recent moisture data."}
     ultimos = validos[-7:]
     actual = mean(v for _, v in ultimos)
     fecha_dato = datetime.strptime(ultimos[-1][0], "%Y%m%d").date()
@@ -52,8 +52,8 @@ def humedad(historico, reciente):
         "indice": indice,  # 0 = muy seca … 4 = muy húmeda
         "escala": [n for _, n, _ in NIVELES_HUMEDAD],
         "que_hacer": que_hacer,
-        "detalle": (f"Comparado con la misma época de los últimos 30 años. Dato al "
-                    f"{fecha_dato:%d/%m/%Y}. Estimado con lluvia y clima: no toma en cuenta el riego."),
+        "detalle": (f"Compared with the same time of year over the last 30 years. Data as of "
+                    f"{fecha_dato:%b %d, %Y}. Estimated from rainfall and weather: irrigation is not taken into account."),
         "valor": round(actual, 2),
         "percentil": round(percentil),
     }
@@ -62,19 +62,19 @@ def humedad(historico, reciente):
 # ---------------- Textura ----------------
 GRUPOS_TEXTURA = {
     "arenosa": {
-        "nombre": "Arenosa",
-        "descripcion": "El agua se filtra rápido y guarda poca humedad y pocos nutrientes.",
-        "que_hacer": "riega más seguido pero con menos agua cada vez, y agrega materia orgánica.",
+        "nombre": "Sandy",
+        "descripcion": "Water drains quickly and it holds little moisture and few nutrients.",
+        "que_hacer": "irrigate more often but with less water each time, and add organic matter.",
     },
     "franca": {
-        "nombre": "Franca (equilibrada)",
-        "descripcion": "Una buena mezcla de arena, limo y arcilla: guarda agua sin encharcarse fácilmente.",
-        "que_hacer": "es un buen suelo para casi todos los cultivos; cuida no compactarlo con maquinaria.",
+        "nombre": "Loam (balanced)",
+        "descripcion": "A good mix of sand, silt and clay: it holds water without waterlogging easily.",
+        "que_hacer": "it's a good soil for almost every crop; be careful not to compact it with machinery.",
     },
     "arcillosa": {
-        "nombre": "Arcillosa",
-        "descripcion": "Guarda bien el agua, pero se encharca con facilidad y se pone dura al secarse.",
-        "que_hacer": "espacia los riegos y no metas maquinaria con la tierra mojada.",
+        "nombre": "Clay",
+        "descripcion": "It holds water well, but waterlogs easily and gets hard when it dries.",
+        "que_hacer": "space out irrigations and keep machinery off wet soil.",
     },
 }
 
@@ -82,112 +82,112 @@ GRUPOS_TEXTURA = {
 def _clase_usda(arena, limo, arcilla):
     """Triángulo de texturas del USDA (porcentajes que suman 100)."""
     if limo + 1.5 * arcilla < 15:
-        return "Arenosa", "arenosa"
+        return "Sand", "arenosa"
     if limo + 2 * arcilla < 30:
-        return "Arena franca", "arenosa"
+        return "Loamy sand", "arenosa"
     if (7 <= arcilla < 20 and arena > 52) or (arcilla < 7 and limo < 50):
-        return "Franco arenosa", "arenosa"
+        return "Sandy loam", "arenosa"
     if 7 <= arcilla < 27 and 28 <= limo < 50 and arena <= 52:
-        return "Franca", "franca"
+        return "Loam", "franca"
     if limo >= 80 and arcilla < 12:
-        return "Limosa", "franca"
+        return "Silt", "franca"
     if (limo >= 50 and 12 <= arcilla < 27) or (50 <= limo < 80 and arcilla < 12):
-        return "Franco limosa", "franca"
+        return "Silt loam", "franca"
     if 20 <= arcilla < 35 and limo < 28 and arena > 45:
-        return "Franco arcillo arenosa", "franca"
+        return "Sandy clay loam", "franca"
     if 27 <= arcilla < 40 and 20 < arena <= 45:
-        return "Franco arcillosa", "arcillosa"
+        return "Clay loam", "arcillosa"
     if 27 <= arcilla < 40 and arena <= 20:
-        return "Franco arcillo limosa", "arcillosa"
+        return "Silty clay loam", "arcillosa"
     if arcilla >= 35 and arena > 45:
-        return "Arcillo arenosa", "arcillosa"
+        return "Sandy clay", "arcillosa"
     if arcilla >= 40 and limo >= 40:
-        return "Arcillo limosa", "arcillosa"
-    return "Arcillosa", "arcillosa"
+        return "Silty clay", "arcillosa"
+    return "Clay", "arcillosa"
 
 
 def textura(props):
     arena, limo, arcilla = props.get("sand"), props.get("silt"), props.get("clay")
     if None in (arena, limo, arcilla):
-        return {"error": "No hay datos de textura para este punto."}
+        return {"error": "No texture data for this location."}
     total = arena + limo + arcilla
     arena, limo, arcilla = (100 * x / total for x in (arena, limo, arcilla))
     clase, grupo = _clase_usda(arena, limo, arcilla)
     return {
         **GRUPOS_TEXTURA[grupo],
         "clase_tecnica": clase,
-        "detalle": f"{clase}: arena {arena:.0f} %, limo {limo:.0f} %, arcilla {arcilla:.0f} %.",
+        "detalle": f"{clase}: sand {arena:.0f} %, silt {limo:.0f} %, clay {arcilla:.0f} %.",
     }
 
 
 # ---------------- Materia orgánica ----------------
 # Materia orgánica (%) ≈ carbono orgánico (g/kg) × 1.724 / 10
 NIVELES_MATERIA_ORGANICA = [  # (MO % menor a…, nombre, tipo de color, descripción, qué hacer)
-    (1.6, "Poca", "alerta", "Tu tierra tiene poca «comida» guardada para los cultivos.",
-     "deja los rastrojos en la parcela e incluye garbanzo o frijol en tu rotación."),
-    (3.6, "Regular", "normal", "Tu tierra tiene una cantidad media de «comida» para los cultivos.",
-     "deja los rastrojos en la parcela para mantenerla."),
-    (999, "Buena", "bueno", "Tu tierra tiene buena «comida» guardada para los cultivos.",
-     "sigue dejando los rastrojos y evita quemarlos."),
+    (1.6, "Low", "alerta", "Your soil has little “food” stored for crops.",
+     "leave crop residue in the field and include chickpea or beans in your rotation."),
+    (3.6, "Fair", "normal", "Your soil has a medium amount of “food” for crops.",
+     "leave crop residue in the field to keep it that way."),
+    (999, "Good", "bueno", "Your soil has plenty of “food” stored for crops.",
+     "keep leaving crop residue and avoid burning it."),
 ]
 
 
 def materia_organica(props):
     carbono = props.get("soc")
     if carbono is None:
-        return {"error": "No hay datos de materia orgánica para este punto."}
+        return {"error": "No organic matter data for this location."}
     mo = carbono * 1.724 / 10
     for limite, nombre, tipo, descripcion, que_hacer in NIVELES_MATERIA_ORGANICA:
         if mo < limite:
             break
     return {"nombre": nombre, "tipo": tipo, "descripcion": descripcion, "que_hacer": que_hacer,
-            "detalle": f"Materia orgánica estimada: {mo:.1f} %."}
+            "detalle": f"Estimated organic matter: {mo:.1f} %."}
 
 
 # ---------------- pH ----------------
 NIVELES_PH = [  # (pH menor a…, nombre, tipo de color, descripción)
-    (5.1, "Ácida", "alerta", "Muchos cultivos crecen mal; puede necesitar cal agrícola."),
-    (6.6, "Un poco ácida", "bueno", "La mayoría de los cultivos la toleran bien."),
-    (7.4, "Neutra", "bueno", "Ideal: casi todos los cultivos crecen bien."),
-    (8.6, "Un poco alcalina", "bueno",
-     "Es común en zonas secas. Muchos cultivos la toleran; algunos pueden "
-     "tener problemas para aprovechar el hierro y el zinc."),
-    (99, "Muy alcalina", "alerta",
-     "Puede haber sales o sodio que dañan a los cultivos; conviene un análisis de laboratorio."),
+    (5.1, "Acidic", "alerta", "Many crops grow poorly; it may need agricultural lime."),
+    (6.6, "Slightly acidic", "bueno", "Most crops tolerate it well."),
+    (7.4, "Neutral", "bueno", "Ideal: almost every crop grows well."),
+    (8.6, "Slightly alkaline", "bueno",
+     "Common in dry areas. Many crops tolerate it; some may "
+     "have trouble taking up iron and zinc."),
+    (99, "Very alkaline", "alerta",
+     "There may be salts or sodium that harm crops; a lab test is advisable."),
 ]
 
 
 def ph(props):
     valor = props.get("phh2o")
     if valor is None:
-        return {"error": "No hay datos de pH para este punto."}
+        return {"error": "No pH data for this location."}
     for limite, nombre, tipo, descripcion in NIVELES_PH:
         if valor < limite:
             break
-    return {"nombre": nombre, "tipo": tipo, "descripcion": descripcion, "detalle": f"pH estimado: {valor:.1f}."}
+    return {"nombre": nombre, "tipo": tipo, "descripcion": descripcion, "detalle": f"Estimated pH: {valor:.1f}."}
 
 
 # ---------------- Terreno (SRTM) ----------------
 NIVELES_PENDIENTE = [  # (pendiente % menor a…, nombre, descripción)
-    (2, "Plano", "El agua de lluvia o riego casi no escurre."),
-    (5, "Poco inclinado", "El agua escurre un poco; hay algo de riesgo de que arrastre la tierra."),
-    (10, "Inclinado", "El agua escurre y puede arrastrar la tierra fértil (erosión)."),
-    (999, "Muy inclinado", "Alto riesgo de que la lluvia arrastre la tierra fértil (erosión)."),
+    (2, "Flat", "Rain or irrigation water barely runs off."),
+    (5, "Gently sloped", "Water runs off a little; there's some risk of it washing soil away."),
+    (10, "Sloped", "Water runs off and can wash away fertile soil (erosion)."),
+    (999, "Steep", "High risk of rain washing away fertile soil (erosion)."),
 ]
 
 
 def terreno(rel, grupo_textura=None):
     pendiente = rel.get("pendiente_pct")
     if pendiente is None:
-        return {"error": "No hay datos de relieve para este punto."}
+        return {"error": "No terrain data for this location."}
     for limite, nombre, descripcion in NIVELES_PENDIENTE:
         if pendiente < limite:
             break
-    if nombre == "Plano" and grupo_textura == "Arcillosa":
-        que_hacer = "nivela bien la parcela: en tierra plana y arcillosa el agua se encharca."
-    elif nombre == "Plano":
-        que_hacer = "no necesitas cuidados especiales por la pendiente."
+    if nombre == "Flat" and grupo_textura == "Clay":
+        que_hacer = "level the field well: on flat clay soil water pools."
+    elif nombre == "Flat":
+        que_hacer = "no special care is needed because of the slope."
     else:
-        que_hacer = "deja el rastrojo como cobertura y siembra en contra de la pendiente (curvas de nivel)."
+        que_hacer = "leave crop residue as cover and plant across the slope (contour lines)."
     return {"nombre": nombre, "descripcion": descripcion, "que_hacer": que_hacer,
-            "detalle": f"Pendiente aproximada {pendiente:.1f} %, altura {rel['altura_m']} m sobre el nivel del mar."}
+            "detalle": f"Approximate slope {pendiente:.1f} %, elevation {rel['altura_m']} m above sea level."}

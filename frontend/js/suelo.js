@@ -30,7 +30,7 @@ function tarjeta(pregunta, dato, extra) {
   if (dato.descripcion) caja.append(crear("p", "", dato.descripcion));
   if (dato.que_hacer) {
     const p = crear("p", "que-hacer");
-    p.append(crear("strong", "", "Qué hacer: "), dato.que_hacer);
+    p.append(crear("strong", "", "What to do: "), dato.que_hacer);
     caja.append(p);
   }
   if (dato.detalle) caja.append(crear("p", "tarjeta-detalle", dato.detalle));
@@ -53,11 +53,11 @@ try {
   const humedad = suelo.humedad;
   if (!humedad.error) humedad.tipo = ["alerta", "alerta", "normal", "agua", "agua"][humedad.indice];
 
-  tarjeta("¿Cuánta humedad tiene ahora?", humedad, humedad.error ? null : escalaHumedad(humedad));
-  tarjeta("¿Qué tipo de tierra tengo?", suelo.textura);
-  tarjeta("¿Tiene materia orgánica?", suelo.materia_organica);
-  tarjeta("¿Es ácida o alcalina?", suelo.ph);
-  tarjeta("¿Mi terreno es plano o inclinado?", suelo.terreno);
+  tarjeta("How much moisture does it have now?", humedad, humedad.error ? null : escalaHumedad(humedad));
+  tarjeta("What type of soil do I have?", suelo.textura);
+  tarjeta("Does it have organic matter?", suelo.materia_organica);
+  tarjeta("Is it acidic or alkaline?", suelo.ph);
+  tarjeta("Is my land flat or sloped?", suelo.terreno);
   estado.hidden = true;
 } catch (error) {
   estado.textContent = error.message;

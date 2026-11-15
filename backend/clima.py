@@ -7,9 +7,9 @@ from statistics import mean
 
 from backend.nasa_power import VALOR_VACIO
 
-MESES_CORTOS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-MESES_LARGOS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
-                "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+MESES_CORTOS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+MESES_LARGOS = ["January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"]
 
 # ---- Reglas ajustables ----
 FRESCO_MENOS_DE = 30          # °C de máxima promedio: barra verde
@@ -64,19 +64,19 @@ def resumen_mensual(datos):
             nivel = "muy_caluroso"
 
         if lluvia_mm < SECO_MENOS_DE:
-            texto_lluvia = "Seco"
+            texto_lluvia = "Dry"
         elif lluvia_mm < POCA_LLUVIA_MENOS_DE:
-            texto_lluvia = "Poca lluvia"
+            texto_lluvia = "Little rain"
         else:
-            texto_lluvia = "Lluvias"
+            texto_lluvia = "Rainy"
 
         etiquetas = []
         if parte_dias_calor >= CALOR_EXTREMO_SI_DIAS:
-            etiquetas.append({"texto": "Calor extremo", "tipo": "peligro"})
+            etiquetas.append({"texto": "Extreme heat", "tipo": "peligro"})
         elif parte_dias_calor >= CALOR_FUERTE_SI_DIAS or maxima >= CALUROSO_MENOS_DE:
-            etiquetas.append({"texto": "Calor fuerte", "tipo": "alerta"})
+            etiquetas.append({"texto": "Strong heat", "tipo": "alerta"})
         if prob_helada >= HELADA_SI_AÑOS:
-            etiquetas.append({"texto": "Posible helada", "tipo": "frio"})
+            etiquetas.append({"texto": "Possible frost", "tipo": "frio"})
 
         resultado.append({
             "mes": MESES_CORTOS[mes - 1],
@@ -107,8 +107,8 @@ def _avisos(meses):
     if racha:
         avisos.append({
             "tipo": "bueno",
-            "titulo": "Meses más frescos",
-            "texto": f"{_nombre_rango(racha)}: días frescos y sin calor fuerte",
+            "titulo": "Coolest months",
+            "texto": f"{_nombre_rango(racha)}: cool days with no strong heat",
         })
 
     extremos = [any(e["tipo"] == "peligro" for e in m["etiquetas"]) for m in meses]
@@ -117,8 +117,8 @@ def _avisos(meses):
         pct = round(mean(meses[i]["dias_calor_extremo_pct"] for i in racha))
         avisos.append({
             "tipo": "peligro",
-            "titulo": "Cuidado",
-            "texto": f"{_nombre_rango(racha)}: más de {DIA_DE_CALOR_EXTREMO} °C en {pct} de cada 100 días",
+            "titulo": "Watch out",
+            "texto": f"{_nombre_rango(racha)}: above {DIA_DE_CALOR_EXTREMO} °C on {pct} out of every 100 days",
         })
     return avisos
 
@@ -146,4 +146,4 @@ def _nombre_rango(indices):
     primero = MESES_LARGOS[indices[0]].capitalize()
     if len(indices) == 1:
         return primero
-    return f"{primero} a {MESES_LARGOS[indices[-1]]}"
+    return f"{primero} to {MESES_LARGOS[indices[-1]]}"

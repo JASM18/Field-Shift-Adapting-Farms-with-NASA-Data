@@ -7,17 +7,17 @@ from datetime import date
 from backend.sembrar import catalogo, region
 
 NA = "n/a"
-DESCANSO = {"id": "descanso", "nombre": "Descanso", "familia": "—", "nitrogeno": "neutro", "agua": 0}
+DESCANSO = {"id": "descanso", "nombre": "Fallow", "familia": "—", "nitrogeno": "neutro", "agua": 0}
 
 # ---- Reglas ajustables ----
 AGUA_MUCHA, AGUA_MEDIA = 7000, 5000          # m³/ha promedio por ciclo sembrado
 SEQUIA_BAJO, SEQUIA_MEDIO = 3000, 5000       # m³/ha del cultivo que más pide (con lo mínimo)
-ORDEN_VEREDICTO = {"Sí conviene": 0, "Sí, si tienes riego asegurado": 1, "Con cuidado": 2}
-NO_CONVIENE = "No conviene aquí"
+ORDEN_VEREDICTO = {"Yes, it's suitable": 0, "Yes, if you have reliable irrigation": 1, "Use caution": 2}
+NO_CONVIENE = "Not suitable here"
 
 
 def _temporada(cultivo):
-    return "PV" if cultivo["temporada"].startswith("Primavera") else "OI"
+    return "PV" if cultivo["temporada"].startswith("Spring") else "OI"
 
 
 def _resumen(c, veredictos):
@@ -27,7 +27,7 @@ def _resumen(c, veredictos):
     return {
         "id": c["id"],
         "nombre": c["nombre"],
-        "familia": c["familia"].split(" (")[0],   # "Gramínea", "Leguminosa", "Oleaginosa"
+        "familia": c["familia"].split(" (")[0],   # "Grass", "Legume", "Oilseed"
         "nitrogeno": c["rotacion"]["nitrogeno"],
         "temporada": _temporada(c),
         "agua": completo,
@@ -47,13 +47,13 @@ def _ciclos(hoy, dentro_region=True):
     ciclos, (temporada, año) = [], inicio
     for _ in range(3):
         if temporada == "OI":
-            ciclos.append({"temporada": "OI", "etiqueta": f"Inv. {año % 100}-{(año + 1) % 100}"})
+            ciclos.append({"temporada": "OI", "etiqueta": f"Winter {año % 100}-{(año + 1) % 100}"})
             temporada, año = "PV", año + 1
         else:
-            ciclos.append({"temporada": "PV", "etiqueta": f"Ver. {año}"})
+            ciclos.append({"temporada": "PV", "etiqueta": f"Summer {año}"})
             temporada = "OI"
     if not dentro_region:
-        nombres = {"OI": "Temp. fresca", "PV": "Temp. cálida"}
+        nombres = {"OI": "Cool season", "PV": "Warm season"}
         for c in ciclos:
             c["etiqueta"] = nombres[c["temporada"]]
     return ciclos
@@ -109,33 +109,33 @@ def generar(ultimo_id, lamina_cm, veredictos, dentro_region=True):
         return _mejor(opciones, lambda c: (c["agua_min"], rango(c)))
 
     planes = [
-        _calificar("A", "Seguir igual", armar(seguir_igual), ciclos, ultimo, disponible),
-        _calificar("B", "Rotar para cuidar tu suelo", armar(rotar), ciclos, ultimo, disponible),
-        _calificar("C", "Ahorrar agua", armar(ahorrar), ciclos, ultimo, disponible),
+        _calificar("A", "Keep the same", armar(seguir_igual), ciclos, ultimo, disponible),
+        _calificar("B", "Rotate to care for your soil", armar(rotar), ciclos, ultimo, disponible),
+        _calificar("C", "Save water", armar(ahorrar), ciclos, ultimo, disponible),
     ]
 
     # Recomendado: el que mejora el suelo y cabe en el agua; si no cabe ninguno, el que menos agua pide
     def puntaje(p):
-        suelo = {"Mejora": 0, "Se mantiene": 1, "Se desgasta": 2}[p["suelo"]["nivel"]]
+        suelo = {"Improves": 0, "Stays the same": 1, "Wears out": 2}[p["suelo"]["nivel"]]
         return (0 if p["alcanza"] is not False else 1, suelo, p["agua"]["promedio_m3"])
     recomendado = min((p for p in planes if p["aplica"]), key=puntaje)
     recomendado["recomendado"] = True
     return {"ultimo": ultimo["nombre"], "lamina_cm": lamina_cm, "ciclos": [c["etiqueta"] for c in ciclos],
             "planes": planes,
             "aviso_region": None if dentro_region else (
-                f"Estás fuera de {region()['nombre']}: las temporadas y el agua de cada cultivo son de esa región. "
-                f"Usa los planes como referencia para la rotación (familias y nitrógeno), que sí aplica en cualquier lugar.")}
+                f"You are outside {region()['nombre']}: the seasons and water for each crop come from that region. "
+                f"Use the plans as a reference for rotation (crop families and nitrogen), which applies anywhere.")}
 
 
 def _calificar(letra, titulo, plan, ciclos, ultimo, disponible):
     sembrados = [c for c in plan if c is not DESCANSO]
     if not sembrados:
         return {"letra": letra, "titulo": titulo, "recomendado": False, "aplica": False, "ciclos": [],
-                "texto": "No aplica: la última vez dejaste la tierra en descanso."}
+                "texto": "Not applicable: last time you left the land fallow."}
 
     # Agua
     promedio = sum(c["agua"] or 0 for c in sembrados) / len(sembrados)
-    nivel_agua = ("Mucha", "peligro") if promedio >= AGUA_MUCHA else ("Media", "alerta") if promedio >= AGUA_MEDIA else ("Poca", "bueno")
+    nivel_agua = ("High", "peligro") if promedio >= AGUA_MUCHA else ("Medium", "alerta") if promedio >= AGUA_MEDIA else ("Low", "bueno")
 
     # Suelo: se desgasta si se repite familia seguida (contando lo último que sembró)
     secuencia = ([ultimo] if ultimo is not DESCANSO else []) + sembrados
@@ -143,16 +143,16 @@ def _calificar(letra, titulo, plan, ciclos, ultimo, disponible):
     leguminosa_tras_gasto = any(a["nitrogeno"] in ("gasta", "gasta_mucho") and b["nitrogeno"] == "aporta"
                                 for a, b in zip(secuencia, secuencia[1:]))
     if repite:
-        suelo = ("Se desgasta", "peligro")
+        suelo = ("Wears out", "peligro")
     elif leguminosa_tras_gasto:
-        suelo = ("Mejora", "bueno")
+        suelo = ("Improves", "bueno")
     else:
-        suelo = ("Se mantiene", "alerta")
+        suelo = ("Stays the same", "alerta")
 
     # Si hay sequía: el cultivo que más agua necesita, aun con lo mínimo
     peor = max(sembrados, key=lambda c: c["agua_min"] or 0)
     m = peor["agua_min"] or 0
-    sequia = ("Bajo", "bueno") if m <= SEQUIA_BAJO else ("Medio", "alerta") if m <= SEQUIA_MEDIO else ("Alto", "peligro")
+    sequia = ("Low", "bueno") if m <= SEQUIA_BAJO else ("Medium", "alerta") if m <= SEQUIA_MEDIO else ("High", "peligro")
 
     # ¿Cabe en el agua que suele tener?
     alcanza = None if disponible is None else all((c["agua_min"] or 0) <= disponible for c in sembrados)
@@ -168,7 +168,7 @@ def _calificar(letra, titulo, plan, ciclos, ultimo, disponible):
         "suelo": {"nivel": suelo[0], "tipo": suelo[1]},
         "sequia": {"nivel": sequia[0], "tipo": sequia[1], "cultivo": peor["nombre"]},
         "alcanza": alcanza,
-        "aviso": f"Con el agua que sueles tener no alcanza para: {', '.join(no_caben)}." if no_caben else None,
+        "aviso": f"The water you usually get isn't enough for: {', '.join(no_caben)}." if no_caben else None,
         "texto": _explicar(letra, plan, ultimo, repite, leguminosa_tras_gasto, peor),
     }
 
@@ -178,17 +178,17 @@ def _explicar(letra, plan, ultimo, repite, leguminosa_tras_gasto, peor):
     nombres = [c["nombre"].lower() for c in sembrados]
     if letra == "A":
         if repite:
-            return (f"Repetir {nombres[0]} agota la tierra, favorece plagas y enfermedades, "
-                    f"y depende de que haya suficiente agua cada año.")
-        return f"Mantiene lo que ya conoces: {', '.join(nombres)}."
+            return (f"Repeating {nombres[0]} depletes the land, encourages pests and diseases, "
+                    f"and depends on having enough water every year.")
+        return f"Keeps what you already know: {', '.join(nombres)}."
     partes = []
     leguminosa = next((c for c in sembrados if c["nitrogeno"] == "aporta"), None)
     if leguminosa_tras_gasto and leguminosa:
-        partes.append(f"El {leguminosa['nombre'].lower()} deja nitrógeno en el suelo; "
-                      f"el cultivo siguiente necesita menos fertilizante")
+        partes.append(f"{leguminosa['nombre'].lower()} leaves nitrogen in the soil; "
+                      f"the next crop needs less fertilizer")
     if letra == "C":
-        partes.append(f"Son los que menos agua piden: el que más necesita es {peor['nombre'].lower()}, "
-                      f"con ~{round((peor['agua_min'] or 0) / 100)} cm de lámina como mínimo")
+        partes.append(f"These need the least water: the thirstiest is {peor['nombre'].lower()}, "
+                      f"with at least ~{round((peor['agua_min'] or 0) / 100)} cm of water")
     if any(c is DESCANSO for c in plan):
-        partes.append("en verano la tierra descansa y se ahorra agua en la época más caliente")
+        partes.append("in summer the land rests and water is saved during the hottest season")
     return " ".join(f[0].upper() + f[1:] + "." for f in partes) if partes else NA

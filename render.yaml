@@ -1,0 +1,14 @@
+# Configuración para publicar Cropy en Render.com (plan gratuito).
+# Render lee este archivo al crear el servicio desde el repositorio de GitHub.
+services:
+  - type: web
+    name: cropy
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: ANTHROPIC_API_KEY
+        sync: false   # NO va aquí: Render la pide al crear el servicio y la guarda como secreto

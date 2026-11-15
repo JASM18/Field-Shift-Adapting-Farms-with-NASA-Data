@@ -88,6 +88,6 @@ def necesidad_de_riego(cultivo, clima, siembra, dias, lat):
         "lluvia_efectiva_mm": round(efectiva_total),
         "riego_neto_mm": round(neto),
         "riego_bruto_m3_ha": round(neto / EFICIENCIA_RIEGO * 10),   # 1 mm = 10 m³/ha
-        "metodo": (f"Cálculo FAO con el clima de tu zona (NASA POWER): el cultivo usa ~{etc_total:.0f} mm en su ciclo, "
-                   f"la lluvia aporta ~{efectiva_total:.0f} mm aprovechables; riego con {EFICIENCIA_RIEGO:.0%} de eficiencia."),
+        "metodo": (f"FAO calculation with your area's climate (NASA POWER): the crop uses ~{etc_total:.0f} mm over its cycle, "
+                   f"rain provides ~{efectiva_total:.0f} mm of usable water; irrigation at {EFICIENCIA_RIEGO:.0%} efficiency."),
     }

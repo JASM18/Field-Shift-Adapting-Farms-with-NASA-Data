@@ -34,7 +34,7 @@ async function mostrar(cultivoId) {
 
   estado.hidden = false;
   estado.className = "estado";
-  estado.textContent = "Analizando clima, suelo y pronóstico…";
+  estado.textContent = "Analyzing climate, soil and forecast…";
   resultado.hidden = true;
 
   try {
@@ -52,20 +52,20 @@ async function mostrar(cultivoId) {
       li.title = m.mes;
       return li;
     }));
-    const notas = [r.siembra.nota !== "n/a" ? r.siembra.nota : "", ...r.siembra.otras.map((o) => `También: ${o}.`)];
+    const notas = [r.siembra.nota !== "n/a" ? r.siembra.nota : "", ...r.siembra.otras.map((o) => `Also: ${o}.`)];
     $("siembra-nota").textContent = notas.filter(Boolean).join(" ");
 
     const a = r.agua;
     $("agua-texto").textContent = a.m3_ha === "n/a" ? "n/a"
-      : `${a.nivel}: unos ${a.m3_ha.toLocaleString("es-MX")} m³ por hectárea (${a.lamina_cm} cm), ${a.riegos} riegos`;
+      : `${a.nivel}: about ${a.m3_ha.toLocaleString("en-US")} m³ per hectare (${a.lamina_cm} cm), ${a.riegos} irrigations`;
     $("agua-barra").style.width = `${a.porcentaje ?? 0}%`;
     $("agua-detalle").textContent = a.detalle;
 
     lista($("riesgos"), r.riesgos.length ? r.riesgos : ["n/a"]);
-    $("este-anio").textContent = r.este_año || "El pronóstico de 6 meses todavía no alcanza esta temporada.";
+    $("este-anio").textContent = r.este_año || "The 6-month forecast doesn't reach this season yet.";
 
     $("bueno-saber").textContent = r.bueno_saber;
-    $("rendimiento").textContent = `Rendimiento esperado: ${r.rendimiento}. Ciclo: ${r.ciclo}.`;
+    $("rendimiento").textContent = `Expected yield: ${r.rendimiento}. Cycle: ${r.ciclo}.`;
 
     const irAgua = new URL("agua.html", location);
     new URLSearchParams(location.search).forEach((v, k) => irAgua.searchParams.set(k, v));
@@ -101,6 +101,6 @@ try {
   const pedido = new URLSearchParams(location.search).get("cultivo");
   mostrar(cultivos.some((c) => c.id === pedido) ? pedido : cultivos[0].id);
 } catch {
-  estado.textContent = "No se pudo cargar la lista de cultivos.";
+  estado.textContent = "Could not load the crop list.";
   estado.classList.add("error");
 }

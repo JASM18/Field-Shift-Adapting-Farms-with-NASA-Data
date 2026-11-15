@@ -47,8 +47,8 @@ def configurado():
     return bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"))
 
 
-SIN_LLAVE = ("La AI no está configurada en este servidor: falta la llave ANTHROPIC_API_KEY en el archivo .env "
-             "(ver README, sección «Asesor con IA»).")
+SIN_LLAVE = ("The AI is not configured on this server: the ANTHROPIC_API_KEY key is missing from the .env file "
+             "(see the README, “Asesor con IA” section).")
 
 
 def cliente():
@@ -85,30 +85,33 @@ def permitir(ip):
 
 
 # ---------- Instrucciones del asesor ----------
-SISTEMA = """Eres el asesor agrícola de CROPY, una app que ayuda a agricultores de regiones con clima extremo \
-(empezando por Sonora, México) a decidir qué sembrar, cuándo y cómo rotar sus cultivos, usando datos de la NASA.
+SISTEMA = """You are the farming advisor of CROPY, an app that helps farmers in regions with extreme climates \
+(starting with Sonora, Mexico) decide what to plant, when, and how to rotate their crops, using NASA data.
 
-Cómo responder:
-- Hablas con agricultores desde su celular: español sencillo, frases cortas, sin tecnicismos. \
-Si usas un término técnico (lámina, NDVI, Kc), explícalo en pocas palabras.
-- Respuestas breves: unas 120 palabras como máximo, salvo que pidan más detalle. Puedes usar listas cortas; no uses tablas.
-- Todo dato sobre clima, suelo, agua o cultivos debe salir de tus herramientas. No inventes números. \
-Si una herramienta no tiene el dato (aparece "n/a") o falla, dilo con honestidad.
-- Di de dónde sale la información, de forma natural (por ejemplo: "según 30 años de datos de la NASA", \
-"según el INIFAP", "según el satélite MODIS").
-- Sugiere, no ordenes: la decisión siempre es del agricultor, que conoce su parcela. Menciona los riesgos. \
-El pronóstico de 6 meses es una tendencia, no una certeza.
-- El catálogo tiene solo 7 cultivos: trigo, maíz, cártamo, garbanzo, frijol, sorgo forrajero y canola. \
-Si preguntan por otro, acláralo y, si das orientación, márcala como general.
-- Los datos de clima son de la zona (cuadros de unos 50 km), no de la parcela exacta.
-- El catálogo de cultivos (fechas, agua, rendimiento, riesgos de manejo) es de Sonora, México (INIFAP). Si las \
-herramientas dicen que la parcela está fuera de esa región ("aviso_region"), acláralo: ahí las fechas se estiman \
-con el clima local de NASA POWER y el agua y el rendimiento son solo referencias. No menciones lugares de Sonora \
-a un agricultor que está en otra parte.
-- Atribuye bien las fuentes: NASA POWER (clima de 30 años y humedad del suelo), NASA MODIS (siembras vistas \
-por satélite), NASA SRTM (relieve), SoilGrids (tipo de suelo), INIFAP / FAO / ECOCROP (datos de cultivos). \
-Los pronósticos de 16 días y de 6 meses son de Open-Meteo (modelo europeo ECMWF), NO de la NASA.
-- Si la pregunta no tiene que ver con el campo, redirige amablemente a temas agrícolas."""
+How to answer:
+- ALWAYS answer in English, even if the tool results or the question contain Spanish text.
+- You are talking to farmers on their phones: plain English, short sentences, no jargon. \
+If you use a technical term (irrigation depth, NDVI, Kc), explain it in a few words.
+- Keep answers short: about 120 words at most, unless they ask for more detail. You may use short lists; do not use tables.
+- Every figure about climate, soil, water or crops must come from your tools. Do not make up numbers. \
+If a tool doesn't have the data (it shows "n/a") or fails, say so honestly.
+- Say where the information comes from, naturally (for example: "according to 30 years of NASA data", \
+"according to INIFAP", "according to the MODIS satellite").
+- Suggest, don't order: the decision always belongs to the farmer, who knows their field. Mention the risks. \
+The 6-month forecast is a trend, not a certainty.
+- The catalog has only 7 crops (tool id in parentheses): wheat (trigo), corn (maiz), safflower (cartamo), \
+chickpea (garbanzo), beans (frijol), forage sorghum (sorgo) and canola (canola). \
+If they ask about another crop, make that clear and, if you give guidance, mark it as general.
+- Water is measured as irrigation depth in cm (1 cm = 100 m³ per hectare); "millares" means thousands of m³.
+- Climate data is for the area (grid cells of about 50 km), not for the exact field.
+- The crop catalog (dates, water, yield, management risks) is from Sonora, Mexico (INIFAP). If the \
+tools say the field is outside that region ("aviso_region"), make that clear: there, dates are estimated \
+from the local NASA POWER climate and water and yield are only reference values. Do not mention places in Sonora \
+to a farmer who is somewhere else.
+- Attribute sources correctly: NASA POWER (30-year climate and soil moisture), NASA MODIS (crops seen \
+by satellite), NASA SRTM (terrain), SoilGrids (soil type), INIFAP / FAO / ECOCROP (crop data). \
+The 16-day and 6-month forecasts are from Open-Meteo (European ECMWF model), NOT from NASA.
+- If the question has nothing to do with farming, kindly steer back to agricultural topics."""
 
 
 def _json(dato):
@@ -129,7 +132,7 @@ def _herramientas(lat, lon):
         try:
             return _json(funcion())
         except requests.RequestException:
-            return _json({"error": "La fuente de datos no respondió. Intenta más tarde."})
+            return _json({"error": "The data source did not respond. Try again later."})
 
     @beta_tool
     def estado_actual_zona() -> str:
@@ -144,7 +147,7 @@ def _herramientas(lat, lon):
                 "lluvia_del_mes": inicio.tarjeta_lluvia(historico["PRECTOTCORR"],
                                                         datos_recientes(lat, lon)["PRECTOTCORR"], pron),
                 "temperatura": inicio.tarjeta_temperatura(historico["T2M_MAX"], pron),
-                "fuentes": "NASA POWER (30 años y días recientes), Open-Meteo (pronóstico de 16 días)",
+                "fuentes": "NASA POWER (30 years and recent days), Open-Meteo (16-day forecast)",
             }
         return proteger(calcular)
 
@@ -177,7 +180,7 @@ def _herramientas(lat, lon):
             cultivo: id del cultivo: trigo, maiz, cartamo, garbanzo, frijol, sorgo o canola.
         """
         ficha = next((c for c in sembrar.catalogo() if c["id"] == cultivo), None)
-        return _json(ficha or {"error": f"'{cultivo}' no está en el catálogo."})
+        return _json(ficha or {"error": f"'{cultivo}' is not in the catalog."})
 
     @beta_tool
     def suelo_de_la_parcela() -> str:
@@ -222,10 +225,10 @@ def _herramientas(lat, lon):
 
 
 NOMBRES_AMIGABLES = {
-    "estado_actual_zona": "cómo está tu zona hoy", "clima_por_mes": "el clima de cada mes",
-    "evaluar_cultivo": "la evaluación del cultivo", "ficha_cultivo": "el catálogo de cultivos",
-    "suelo_de_la_parcela": "tu suelo", "agua_disponible": "el cálculo de agua",
-    "planes_rotacion": "los planes de rotación",
+    "estado_actual_zona": "how your area is today", "clima_por_mes": "the climate for each month",
+    "evaluar_cultivo": "the crop evaluation", "ficha_cultivo": "the crop catalog",
+    "suelo_de_la_parcela": "your soil", "agua_disponible": "the water calculation",
+    "planes_rotacion": "the rotation plans",
 }
 
 
@@ -235,7 +238,7 @@ def responder(mensajes, lat, lon, nombre_lugar):
                  for m in mensajes[-MAX_MENSAJES_HISTORIAL:] if m.get("texto")]
     while historial and historial[0]["role"] != "user":
         historial.pop(0)  # la conversación debe empezar con el usuario
-    contexto = f"Hoy es {date.today():%d/%m/%Y}. La parcela del agricultor está en {nombre_lugar} (lat {lat}, lon {lon})."
+    contexto = f"Today is {date.today():%B %d, %Y}. The farmer's field is in {nombre_lugar} (lat {lat}, lon {lon})."
 
     runner = cliente().beta.messages.tool_runner(
         model=MODELO,
@@ -256,8 +259,8 @@ def responder(mensajes, lat, lon, nombre_lugar):
         consultas += [b.name for b in mensaje.content if b.type == "tool_use"]
 
     if final is None or final.stop_reason == "refusal":
-        return {"texto": "No puedo ayudarte con esa pregunta. Intenta preguntarme sobre tus cultivos, "
-                         "tu suelo, el clima o el agua.", "consultas": []}
+        return {"texto": "I can't help you with that question. Try asking me about your crops, "
+                         "your soil, the climate or water.", "consultas": []}
     texto = "\n".join(b.text for b in final.content if b.type == "text").strip()
-    return {"texto": texto or "No tengo una respuesta para eso. ¿Puedes preguntarlo de otra forma?",
+    return {"texto": texto or "I don't have an answer for that. Could you ask it another way?",
             "consultas": list(dict.fromkeys(NOMBRES_AMIGABLES.get(n, n) for n in consultas))}

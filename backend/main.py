@@ -37,7 +37,7 @@ def api_clima(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=
     try:
         datos = clima_diario_historico(lat, lon)
     except requests.RequestException:
-        raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
+        raise HTTPException(503, "NASA POWER did not respond. Try again in a moment.")
     return resumen_mensual(datos)
 
 
@@ -53,15 +53,15 @@ def api_suelo(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=
 
     humedad = intentar(
         lambda: suelo.humedad(humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"]),
-        "NASA POWER no respondió.")
+        "NASA POWER did not respond.")
 
-    props = intentar(lambda: propiedades_suelo(lat, lon), "SoilGrids no respondió.")
+    props = intentar(lambda: propiedades_suelo(lat, lon), "SoilGrids did not respond.")
     if "error" in props:
         textura = materia = acidez = props
     else:
         textura, materia, acidez = suelo.textura(props), suelo.materia_organica(props), suelo.ph(props)
 
-    rel = intentar(lambda: relieve(lat, lon), "El servicio de relieve (SRTM) no respondió.")
+    rel = intentar(lambda: relieve(lat, lon), "The terrain service (SRTM) did not respond.")
     terreno = rel if "error" in rel else suelo.terreno(rel, textura.get("nombre"))
 
     return {"humedad": humedad, "textura": textura, "materia_organica": materia,
@@ -82,7 +82,7 @@ def api_sembrar(cultivo: str, lat: float = Query(ge=-90, le=90), lon: float = Qu
     try:
         historico = clima_diario_historico(lat, lon)
     except requests.RequestException:
-        raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
+        raise HTTPException(503, "NASA POWER did not respond. Try again in a moment.")
 
     def opcional(funcion):
         try:
@@ -111,7 +111,7 @@ class PreguntaAsesor(BaseModel):
     mensajes: list[Mensaje] = Field(min_length=1, max_length=40)
     lat: float = Field(ge=-90, le=90)
     lon: float = Field(ge=-180, le=180)
-    nombre: str = Field(default="tu zona", max_length=80)
+    nombre: str = Field(default="your area", max_length=80)
 
 
 @app.get("/api/asesor/estado")
@@ -128,21 +128,21 @@ def api_asesor(pregunta: PreguntaAsesor, request: Request):
                  or request.headers.get("x-forwarded-for", "").split(",")[0].strip()
                  or (request.client.host if request.client else "?"))
     if not asesor.permitir(visitante):
-        raise HTTPException(429, "Llegaste al límite de preguntas por hora. Intenta más tarde.")
+        raise HTTPException(429, "You reached the hourly question limit. Try again later.")
     try:
         return asesor.responder([m.model_dump() for m in pregunta.mensajes],
                                 pregunta.lat, pregunta.lon, pregunta.nombre)
     except anthropic.AuthenticationError:
-        raise HTTPException(500, "La llave de la AI no es válida (revisa ANTHROPIC_API_KEY en el archivo .env).")
+        raise HTTPException(500, "The AI key is not valid (check ANTHROPIC_API_KEY in the .env file).")
     except anthropic.RateLimitError:
-        raise HTTPException(429, "La AI está muy ocupada. Intenta en un minuto.")
+        raise HTTPException(429, "The AI is very busy. Try again in a minute.")
     except anthropic.APIConnectionError:
-        raise HTTPException(503, "No hay conexión con la AI. Revisa tu internet.")
+        raise HTTPException(503, "No connection to the AI. Check your internet.")
     except anthropic.APIStatusError:
-        raise HTTPException(502, "La AI tuvo un problema. Intenta de nuevo.")
+        raise HTTPException(502, "The AI had a problem. Try again.")
     except Exception as error:  # cualquier otra falla: mensaje claro en vez de un error genérico
         print(f"[asesor] Error inesperado: {type(error).__name__}: {error}")
-        raise HTTPException(500, "La AI tuvo un error inesperado. Revisa la consola del servidor.")
+        raise HTTPException(500, "The AI had an unexpected error. Check the server console.")
 
 
 # ---- Tus próximos 3 ciclos ----
@@ -154,7 +154,7 @@ def api_planes(ultimo: str, lamina_cm: float = Query(gt=0, le=300),
     try:
         historico = clima_diario_historico(lat, lon)
     except requests.RequestException:
-        raise HTTPException(503, "NASA POWER no respondió. Intenta de nuevo en un momento.")
+        raise HTTPException(503, "NASA POWER did not respond. Try again in a moment.")
     veredictos = {c["id"]: sembrar.evaluar(c["id"], historico, lat=lat, lon=lon)["veredicto"]
                   for c in sembrar.lista_cultivos()}
     return planes.generar(ultimo, lamina_cm, veredictos, dentro_region=sembrar.en_region(lat, lon))
@@ -183,7 +183,7 @@ def _tarjeta(calcular, mensaje):
 def api_inicio_humedad(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
     return _tarjeta(lambda: inicio.tarjeta_humedad(suelo.humedad(
         humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"])),
-        "NASA POWER no respondió.")
+        "NASA POWER did not respond.")
 
 
 @app.get("/api/inicio/lluvia")
@@ -192,14 +192,14 @@ def api_inicio_lluvia(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-
         clima_diario_historico(lat, lon)["PRECTOTCORR"],
         datos_recientes(lat, lon)["PRECTOTCORR"],
         pronostico_diario(lat, lon)),
-        "No se pudo consultar la lluvia.")
+        "Could not fetch rainfall data.")
 
 
 @app.get("/api/inicio/temperatura")
 def api_inicio_temperatura(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
     return _tarjeta(lambda: inicio.tarjeta_temperatura(
         clima_diario_historico(lat, lon)["T2M_MAX"], pronostico_diario(lat, lon)),
-        "No se pudo consultar la temperatura.")
+        "Could not fetch temperature data.")
 
 
 @app.get("/api/inicio/siembras")
@@ -217,7 +217,7 @@ def api_inicio_siembras(lat: float = Query(ge=-90, le=90), lon: float = Query(ge
                 pass  # si un año falla, comparamos con los demás
         return inicio.tarjeta_siembras(actual, otros)
 
-    return _tarjeta(calcular, "El servidor de MODIS no respondió.")
+    return _tarjeta(calcular, "The MODIS server did not respond.")
 
 
 if os.getenv("DEV"):

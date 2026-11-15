@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>¿Te alcanza el agua? · Cropy</title>
+  <title>Do you have enough water? · Cropy</title>
   <link rel="icon" type="image/png" href="img/favicon-64.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <meta name="theme-color" content="#1f4d34">
@@ -13,46 +13,46 @@
   <div class="pantalla">
     <header class="encabezado">
       <div class="barra-superior">
-        <a class="volver" href="index.html">Inicio</a>
+        <a class="volver" href="index.html">Home</a>
         <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
       </div>
-      <h1>¿Te alcanza el agua?</h1>
-      <p>Dos preguntas y te decimos qué cultivos caben</p>
+      <h1>Do you have enough water?</h1>
+      <p>Two questions and we'll tell you which crops fit</p>
     </header>
 
     <main>
-      <h2 class="pregunta">1. ¿Cuántas hectáreas vas a sembrar?</h2>
+      <h2 class="pregunta">1. How many hectares will you plant?</h2>
       <div class="contador">
-        <button type="button" id="menos" aria-label="Menos hectáreas">−</button>
+        <button type="button" id="menos" aria-label="Fewer hectares">−</button>
         <label class="contador-valor">
-          <input id="hectareas" type="number" inputmode="decimal" min="0.5" step="0.5" value="10" aria-label="Hectáreas">
+          <input id="hectareas" type="number" inputmode="decimal" min="0.5" step="0.5" value="10" aria-label="Hectares">
           <span>ha</span>
         </label>
-        <button type="button" id="mas" aria-label="Más hectáreas">+</button>
+        <button type="button" id="mas" aria-label="More hectares">+</button>
       </div>
-      <p class="nota-chica">¿No sabes? Dibujar tu parcela en el mapa: próximamente.</p>
+      <p class="nota-chica">Not sure? Drawing your field on the map: coming soon.</p>
 
-      <h2 class="pregunta">2. ¿Cuánta agua te asignaron este ciclo?</h2>
-      <div class="opciones-agua" role="radiogroup" aria-label="Agua asignada">
-        <button type="button" data-cm="30" role="radio"><strong>Poca</strong><small>30 cm de lámina</small></button>
-        <button type="button" data-cm="45" role="radio"><strong>Media</strong><small>45 cm de lámina</small></button>
-        <button type="button" data-cm="70" role="radio"><strong>Completa</strong><small>70 cm de lámina</small></button>
+      <h2 class="pregunta">2. How much water were you allotted this season?</h2>
+      <div class="opciones-agua" role="radiogroup" aria-label="Allotted water">
+        <button type="button" data-cm="30" role="radio"><strong>Low</strong><small>30 cm of water</small></button>
+        <button type="button" data-cm="45" role="radio"><strong>Medium</strong><small>45 cm of water</small></button>
+        <button type="button" data-cm="70" role="radio"><strong>Full</strong><small>70 cm of water</small></button>
       </div>
-      <label class="otra-lamina">Otra cantidad:
-        <input id="lamina" type="number" inputmode="decimal" min="1" max="300" step="1" value="45"> cm de lámina
+      <label class="otra-lamina">Other amount:
+        <input id="lamina" type="number" inputmode="decimal" min="1" max="300" step="1" value="45"> cm of water
       </label>
       <p id="disponible" class="disponible"></p>
 
       <p id="aviso-region" class="aviso-region" hidden></p>
       <section class="cabe">
-        <h3>Esto es lo que cabe</h3>
+        <h3>This is what fits</h3>
         <div id="estado" class="estado" hidden></div>
         <ul id="lista" class="lista-cultivos"></ul>
       </section>
 
-      <p class="fuente">Cálculo: agua de riego que recomienda el INIFAP (Sonora, México) para cada cultivo
-        (Agenda Técnica Agrícola 2026) × tus hectáreas. 1 cm de lámina = 100 m³ por hectárea;
-        1 millar = 1,000 m³. Toca un cultivo para ver cómo se reparten sus riegos.</p>
+      <p class="fuente">Calculation: irrigation water recommended by INIFAP (Sonora, Mexico) for each crop
+        (Agenda Técnica Agrícola 2026) × your hectares. 1 cm of water depth = 100 m³ per hectare;
+        1 thousand m³ = 1,000 m³. Tap a crop to see how its irrigations are spread out.</p>
     </main>
   </div>
 

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>El clima de tu zona · Cropy</title>
+  <title>Your area's climate · Cropy</title>
   <link rel="icon" type="image/png" href="img/favicon-64.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <meta name="theme-color" content="#1f4d34">
@@ -13,26 +13,26 @@
   <div class="pantalla">
     <header class="encabezado">
       <div class="barra-superior">
-        <a class="volver" href="index.html">Inicio</a>
+        <a class="volver" href="index.html">Home</a>
         <img class="logo-chico" src="img/logo-96.png" alt="Cropy" width="36" height="36">
       </div>
-      <h1>El clima de tu zona</h1>
-      <p id="subtitulo">Lo que pasa normalmente cada mes</p>
+      <h1>Your area's climate</h1>
+      <p id="subtitulo">What usually happens each month</p>
     </header>
 
     <main>
-      <div id="estado" class="estado">Consultando datos de la NASA…</div>
+      <div id="estado" class="estado">Fetching NASA data…</div>
 
       <section id="avisos"></section>
 
       <section id="seccion-meses" hidden>
-        <h2>Mes por mes</h2>
-        <p class="nota">Barra = qué tan caliente se pone en la tarde</p>
+        <h2>Month by month</h2>
+        <p class="nota">Bar = how hot the afternoons get</p>
         <ol id="meses" class="meses"></ol>
       </section>
 
-      <p class="fuente">Fuente: NASA POWER (power.larc.nasa.gov), datos diarios de temperatura y lluvia.
-        Es el clima de la zona (cuadros de ~50 km), no de tu parcela exacta.</p>
+      <p class="fuente">Source: NASA POWER (power.larc.nasa.gov), daily temperature and rainfall data.
+        This is the climate of the area (~50 km grid cells), not of your exact field.</p>
     </main>
   </div>
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,57 +16,57 @@
       <div class="marca">
         <img src="img/logo-192.png" alt="" width="52" height="52">
         <span class="marca-nombre">Cropy</span>
-        <span id="saludo" class="marca-saludo">Buenos días</span>
+        <span id="saludo" class="marca-saludo">Good morning</span>
       </div>
-      <h1>📍 Tu parcela · <span id="nombre-lugar"></span></h1>
+      <h1>📍 Your field · <span id="nombre-lugar"></span></h1>
       <!-- Mapa interactivo: toca para mover tu parcela -->
-      <div id="mapa" class="mapa-real" aria-label="Mapa de tu parcela"></div>
+      <div id="mapa" class="mapa-real" aria-label="Map of your field"></div>
       <div class="mapa-acciones">
-        <button type="button" id="mi-ubicacion" class="mapa-boton">📍 Mi ubicación</button>
-        <span id="mapa-mensaje" class="mapa-mensaje">Toca el mapa para elegir tu parcela</span>
+        <button type="button" id="mi-ubicacion" class="mapa-boton">📍 My location</button>
+        <span id="mapa-mensaje" class="mapa-mensaje">Tap the map to choose your field</span>
       </div>
       <div id="mapa-confirmar" class="mapa-confirmar" hidden>
         <span id="mapa-punto"></span>
-        <button type="button" id="usar-punto" class="mapa-boton principal">Usar este punto</button>
-        <button type="button" id="cancelar-punto" class="mapa-boton">Cancelar</button>
+        <button type="button" id="usar-punto" class="mapa-boton principal">Use this point</button>
+        <button type="button" id="cancelar-punto" class="mapa-boton">Cancel</button>
       </div>
     </header>
 
     <main>
-      <button id="escuchar" class="boton-contorno" type="button">🔊 Escuchar el resumen de hoy</button>
-      <a href="asesor.html" class="boton-lleno boton-asesor">💬 Pregúntale a la AI</a>
+      <button id="escuchar" class="boton-contorno" type="button">🔊 Listen to today's summary</button>
+      <a href="asesor.html" class="boton-lleno boton-asesor">💬 Ask the AI</a>
 
-      <h2>¿Cómo está tu zona hoy?</h2>
-      <p class="nota" id="nota-comparacion">Comparado con lo normal para esta época</p>
+      <h2>How is your area today?</h2>
+      <p class="nota" id="nota-comparacion">Compared with what's normal for this time of year</p>
       <div class="cuadricula">
-        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/humedad" data-titulo="Agua en el suelo" data-icono="💧"></article>
-        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/lluvia" data-titulo="Lluvia del mes" data-icono="🌧️"></article>
-        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/temperatura" data-titulo="Temperatura" data-icono="🌡️"></article>
-        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/siembras" data-titulo="Siembras alrededor" data-icono="🌿"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/humedad" data-titulo="Soil water" data-icono="💧"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/lluvia" data-titulo="Rain this month" data-icono="🌧️"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/temperatura" data-titulo="Temperature" data-icono="🌡️"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/siembras" data-titulo="Crops nearby" data-icono="🌿"></article>
       </div>
-      <p class="fuente">Toca una tarjeta para ver el dato exacto. Fuentes: NASA POWER, NASA MODIS, Open-Meteo.</p>
+      <p class="fuente">Tap a card to see the exact figure. Sources: NASA POWER, NASA MODIS, Open-Meteo.</p>
 
-      <h2>¿Qué quieres hacer?</h2>
+      <h2>What would you like to do?</h2>
       <ul class="menu">
         <li><a href="clima.html">
           <span class="icono">☀️</span>
-          <span><strong>El clima de mi zona</strong><small>Qué meses son buenos y cuáles peligrosos</small></span>
+          <span><strong>My area's climate</strong><small>Which months are good and which are dangerous</small></span>
         </a></li>
         <li><a href="sembrar.html">
           <span class="icono">🌱</span>
-          <span><strong>¿Qué puedo sembrar?</strong><small>Mejor época, agua y riesgos de cada cultivo</small></span>
+          <span><strong>What can I plant?</strong><small>Best season, water and risks for each crop</small></span>
         </a></li>
         <li><a href="planes.html">
           <span class="icono">🔄</span>
-          <span><strong>Planear mis próximos ciclos</strong><small>Qué sembrar después para cuidar la tierra</small></span>
+          <span><strong>Plan my next seasons</strong><small>What to plant next to take care of the land</small></span>
         </a></li>
         <li><a href="suelo.html">
           <span class="icono">🟫</span>
-          <span><strong>Mi suelo</strong><small>Explicado en palabras sencillas</small></span>
+          <span><strong>My soil</strong><small>Explained in plain words</small></span>
         </a></li>
         <li><a href="agua.html">
           <span class="icono">💧</span>
-          <span><strong>¿Me alcanza el agua?</strong><small>Según tus hectáreas y el agua asignada</small></span>
+          <span><strong>Do I have enough water?</strong><small>Based on your hectares and allotted water</small></span>
         </a></li>
       </ul>
     </main>

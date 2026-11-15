@@ -4,13 +4,13 @@ import { UBICACION, pedirApi, conservarUbicacionEnEnlaces } from "./comun.js";
 conservarUbicacionEnEnlaces();
 document.getElementById("nombre-lugar").textContent = UBICACION.nombre;
 
-const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
-  "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const MESES = ["January", "February", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December"];
 const hora = new Date().getHours();
 document.getElementById("saludo").textContent =
-  hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
+  hora < 12 ? "Good morning" : hora < 19 ? "Good afternoon" : "Good evening";
 document.getElementById("nota-comparacion").textContent =
-  `Comparado con lo normal para ${MESES[new Date().getMonth()]}`;
+  `Compared with what's normal for ${MESES[new Date().getMonth()]}`;
 
 function crear(etiqueta, clase, texto) {
   const el = document.createElement(etiqueta);
@@ -30,7 +30,7 @@ function encabezado(caja) {
 
 for (const caja of tarjetas) {
   encabezado(caja);
-  caja.append(crear("p", "tarjeta-zona-descripcion", "Cargando…"));
+  caja.append(crear("p", "tarjeta-zona-descripcion", "Loading…"));
 
   pedirApi(caja.dataset.ruta)
     .then((dato) => {
@@ -69,16 +69,16 @@ botonEscuchar.addEventListener("click", () => {
     speechSynthesis.cancel();
     return;
   }
-  const partes = [`${document.getElementById("saludo").textContent}. Así está tu zona hoy.`];
+  const partes = [`${document.getElementById("saludo").textContent}. Here is how your area is doing today.`];
   for (const caja of tarjetas) {
     const dato = resultados.get(caja);
     if (!dato) continue;
     partes.push(`${caja.dataset.titulo}: ${dato.nombre}. ${dato.descripcion}.`);
     for (const aviso of dato.avisos || []) partes.push(aviso.replace(/^[^\p{L}\d]+/u, "") + ".");
   }
-  if (partes.length === 1) partes.push("Todavía estoy cargando los datos, intenta en unos segundos.");
+  if (partes.length === 1) partes.push("I'm still loading the data, try again in a few seconds.");
   const voz = new SpeechSynthesisUtterance(partes.join(" "));
-  voz.lang = "es-MX";
+  voz.lang = "en-US";
   voz.rate = 0.95;
   speechSynthesis.speak(voz);
 });

@@ -25,7 +25,7 @@ function tarjetaPlan(p) {
   const caja = crear("article", `plan${p.recomendado ? " recomendado" : ""}`);
   const cabeza = crear("div", "plan-cabeza");
   cabeza.append(crear("h3", "", `Plan ${p.letra} · ${p.titulo}`));
-  if (p.recomendado) cabeza.append(crear("span", "insignia", "Recomendado"));
+  if (p.recomendado) cabeza.append(crear("span", "insignia", "Recommended"));
   caja.append(cabeza);
 
   if (!p.aplica) {
@@ -43,7 +43,7 @@ function tarjetaPlan(p) {
   caja.append(ciclos);
 
   const indicadores = crear("div", "plan-indicadores");
-  indicadores.append(indicador("Agua", p.agua), indicador("Tu suelo", p.suelo), indicador("Si hay sequía", p.sequia));
+  indicadores.append(indicador("Water", p.agua), indicador("Your soil", p.suelo), indicador("In a drought", p.sequia));
   caja.append(indicadores);
 
   caja.append(crear("p", "", p.texto));
@@ -63,7 +63,7 @@ async function cargar() {
   const estado = $("estado");
   estado.hidden = false;
   estado.className = "estado";
-  estado.textContent = "Armando planes…";
+  estado.textContent = "Building plans…";
   try {
     const r = await pedirApi("/api/planes", { ultimo: selector.value, lamina_cm: lamina });
     mostrarAvisoRegion(r.aviso_region);
@@ -77,7 +77,7 @@ async function cargar() {
 
 try {
   const cultivos = await (await fetch("/api/cultivos")).json();
-  for (const c of [...cultivos, { id: "descanso", nombre: "Nada (descanso)" }]) {
+  for (const c of [...cultivos, { id: "descanso", nombre: "Nothing (fallow)" }]) {
     const opcion = crear("option", "", c.nombre);
     opcion.value = c.id;
     selector.append(opcion);
@@ -87,6 +87,6 @@ try {
   botonesAgua.forEach((b) => b.addEventListener("click", () => { lamina = Number(b.dataset.cm); cargar(); }));
   cargar();
 } catch {
-  $("estado").textContent = "No se pudo cargar la lista de cultivos.";
+  $("estado").textContent = "Could not load the crop list.";
   $("estado").classList.add("error");
 }
