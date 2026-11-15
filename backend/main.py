@@ -13,10 +13,14 @@ import requests
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 
-from backend import suelo
+from backend import inicio, suelo
 from backend.clima import resumen_mensual
 from backend.fuentes_suelo import propiedades_suelo, relieve
-from backend.nasa_power import clima_diario_historico, humedad_suelo_historica, humedad_suelo_reciente
+from backend.modis import superficie_verde, ultima_fecha
+from backend.nasa_power import clima_diario_historico, datos_recientes, humedad_suelo_historica
+from backend.open_meteo import pronostico_diario
+
+AÑOS_A_COMPARAR = 5  # años anteriores para la tarjeta "Siembras alrededor"
 
 CARPETA_FRONTEND = Path(__file__).parent.parent / "frontend"
 
@@ -44,7 +48,7 @@ def api_suelo(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=
             return {"error": mensaje}
 
     humedad = intentar(
-        lambda: suelo.humedad(humedad_suelo_historica(lat, lon), humedad_suelo_reciente(lat, lon)),
+        lambda: suelo.humedad(humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"]),
         "NASA POWER no respondió.")
 
     props = intentar(lambda: propiedades_suelo(lat, lon), "SoilGrids no respondió.")
@@ -58,6 +62,57 @@ def api_suelo(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=
 
     return {"humedad": humedad, "textura": textura, "materia_organica": materia,
             "ph": acidez, "terreno": terreno}
+
+
+# ---- Inicio: una ruta por tarjeta, para que la página las cargue por separado ----
+
+def _tarjeta(calcular, mensaje):
+    """Si una fuente falla, la tarjeta muestra el error en vez de tumbar la página."""
+    try:
+        return calcular()
+    except requests.RequestException:
+        return {"error": mensaje}
+
+
+@app.get("/api/inicio/humedad")
+def api_inicio_humedad(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    return _tarjeta(lambda: inicio.tarjeta_humedad(suelo.humedad(
+        humedad_suelo_historica(lat, lon), datos_recientes(lat, lon)["GWETROOT"])),
+        "NASA POWER no respondió.")
+
+
+@app.get("/api/inicio/lluvia")
+def api_inicio_lluvia(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    return _tarjeta(lambda: inicio.tarjeta_lluvia(
+        clima_diario_historico(lat, lon)["PRECTOTCORR"],
+        datos_recientes(lat, lon)["PRECTOTCORR"],
+        pronostico_diario(lat, lon)),
+        "No se pudo consultar la lluvia.")
+
+
+@app.get("/api/inicio/temperatura")
+def api_inicio_temperatura(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    return _tarjeta(lambda: inicio.tarjeta_temperatura(
+        clima_diario_historico(lat, lon)["T2M_MAX"], pronostico_diario(lat, lon)),
+        "No se pudo consultar la temperatura.")
+
+
+@app.get("/api/inicio/siembras")
+def api_inicio_siembras(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
+    def calcular():
+        ultima = ultima_fecha(lat, lon)
+        actual = superficie_verde(lat, lon, ultima["modis_date"])
+        # Misma fecha (mismo día del año) en años anteriores
+        año, dia = int(ultima["modis_date"][1:5]), ultima["modis_date"][5:]
+        otros = []
+        for anterior in range(año - AÑOS_A_COMPARAR, año):
+            try:
+                otros.append(superficie_verde(lat, lon, f"A{anterior}{dia}"))
+            except (requests.RequestException, KeyError, IndexError):
+                pass  # si un año falla, comparamos con los demás
+        return inicio.tarjeta_siembras(actual, otros)
+
+    return _tarjeta(calcular, "El servidor de MODIS no respondió.")
 
 
 if os.getenv("DEV"):

@@ -9,12 +9,29 @@
 <body>
   <div class="pantalla">
     <header class="encabezado">
-      <p>Buenos días</p>
+      <p id="saludo">Buenos días</p>
       <h1>📍 Tu parcela · <span id="nombre-lugar"></span></h1>
+      <!-- Mapa decorativo de parcelas (más adelante puede ser un mapa real) -->
+      <div class="mapa-parcelas" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <div class="mapa-marcador"><b>📍</b><small>Estás aquí</small></div>
+      </div>
     </header>
 
     <main>
-      <!-- Aquí irán las tarjetas de "¿Cómo está tu zona hoy?" -->
+      <button id="escuchar" class="boton-contorno" type="button">🔊 Escuchar el resumen de hoy</button>
+
+      <h2>¿Cómo está tu zona hoy?</h2>
+      <p class="nota" id="nota-comparacion">Comparado con lo normal para esta época</p>
+      <div class="cuadricula">
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/humedad" data-titulo="Agua en el suelo" data-icono="💧"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/lluvia" data-titulo="Lluvia del mes" data-icono="🌧️"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/temperatura" data-titulo="Temperatura" data-icono="🌡️"></article>
+        <article class="tarjeta-zona cargando" data-ruta="/api/inicio/siembras" data-titulo="Siembras alrededor" data-icono="🌿"></article>
+      </div>
+      <p class="fuente">Toca una tarjeta para ver el dato exacto. Fuentes: NASA POWER, NASA MODIS, Open-Meteo.</p>
 
       <h2>¿Qué quieres hacer?</h2>
       <ul class="menu">
@@ -42,10 +59,6 @@
     </main>
   </div>
 
-  <script type="module">
-    import { UBICACION, conservarUbicacionEnEnlaces } from "./js/comun.js";
-    document.getElementById("nombre-lugar").textContent = UBICACION.nombre;
-    conservarUbicacionEnEnlaces();
-  </script>
+  <script type="module" src="js/inicio.js"></script>
 </body>
 </html>

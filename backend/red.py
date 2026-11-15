@@ -18,11 +18,11 @@ urllib3.util.connection.allowed_gai_family = lambda: socket.AF_INET
 TIEMPO_ESPERA = (10, 90)
 
 
-def pedir_json(url, params, intentos=4):
+def pedir_json(url, params, intentos=4, encabezados=None):
     """Hace la consulta y devuelve el JSON; si falla, espera un poco y reintenta."""
     for intento in range(1, intentos + 1):
         try:
-            respuesta = requests.get(url, params=params, timeout=TIEMPO_ESPERA)
+            respuesta = requests.get(url, params=params, headers=encabezados, timeout=TIEMPO_ESPERA)
             respuesta.raise_for_status()
             return respuesta.json()
         except requests.RequestException:

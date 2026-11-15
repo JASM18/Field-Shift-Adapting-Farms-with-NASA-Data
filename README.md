@@ -31,6 +31,9 @@ backend/            Servidor en Python (FastAPI)
   clima.py          Resumen "El clima de tu zona" (reglas ajustables arriba del archivo)
   fuentes_suelo.py  SoilGrids y SRTM (datos fijos, se guardan una vez por punto)
   suelo.py          Pantalla "Así es tu suelo" (reglas ajustables)
+  open_meteo.py     Open-Meteo: días recientes y pronóstico de 16 días
+  modis.py          MODIS (ORNL DAAC): superficie verde alrededor de la parcela
+  inicio.py         Tarjetas del Inicio "¿Cómo está tu zona hoy?" (reglas ajustables)
 frontend/           Páginas (HTML/CSS/JS)
   index.html        Inicio
   clima.html        El clima de tu zona
@@ -46,7 +49,7 @@ pruebas/            Scripts de prueba de APIs
 | Pantalla | Datos | Estado |
 |---|---|---|
 | El clima de tu zona | NASA POWER | ✅ Funciona |
-| Inicio | NASA POWER, Open-Meteo, MODIS | 🟡 Solo menú |
+| Inicio | NASA POWER, Open-Meteo, MODIS | ✅ Funciona |
 | ¿Qué puedo sembrar? | Catálogo de cultivos + clima + Open-Meteo | ⏳ Falta catálogo |
 | Planear mis próximos ciclos | Reglas de rotación | ⏳ Falta catálogo |
 | Mi suelo | SoilGrids, SRTM, NASA POWER | ✅ Funciona |

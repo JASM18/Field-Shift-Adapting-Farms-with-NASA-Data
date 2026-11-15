@@ -69,24 +69,25 @@ def humedad_suelo_historica(lat, lon):
     return datos
 
 
-def humedad_suelo_reciente(lat, lon, dias=45):
-    """Humedad del suelo de los últimos días. NASA POWER tiene ~3 días de retraso,
-    así que los más recientes vienen vacíos (-999). Se guarda un archivo por día."""
+def datos_recientes(lat, lon, dias=45):
+    """Humedad del suelo, lluvia y temperatura máxima de los últimos días.
+    NASA POWER tiene ~3 días de retraso, así que los más recientes vienen vacíos (-999).
+    Se guarda un archivo por día."""
     hoy = date.today()
     lat, lon = round(lat, 1), round(lon, 1)
-    archivo = CARPETA_CACHE / f"power_humedad_reciente_{lat}_{lon}_{hoy:%Y%m%d}.json"
+    archivo = CARPETA_CACHE / f"power_reciente_{lat}_{lon}_{hoy:%Y%m%d}.json"
     if archivo.exists():
         return json.loads(archivo.read_text())
 
     datos = pedir_json(URL_DIARIO, {
-        "parameters": "GWETROOT",
+        "parameters": "GWETROOT,PRECTOTCORR,T2M_MAX",
         "community": "AG",
         "latitude": lat,
         "longitude": lon,
         "start": f"{hoy - timedelta(days=dias):%Y%m%d}",
         "end": f"{hoy:%Y%m%d}",
         "format": "JSON",
-    })["properties"]["parameter"]["GWETROOT"]
+    })["properties"]["parameter"]
 
     CARPETA_CACHE.mkdir(exist_ok=True)
     archivo.write_text(json.dumps(datos))

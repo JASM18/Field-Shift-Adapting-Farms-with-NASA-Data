@@ -140,3 +140,63 @@ h2 { font-size: 1.35rem; font-weight: 800; margin: 24px 0 4px; }
 .nivel-4 .escala-color { background: #8db4dd; }
 .escala-paso.actual .escala-color { height: 20px; margin-top: -4px; outline: 2px solid var(--texto); outline-offset: 1px; }
 .escala-paso.actual .escala-nombre { font-weight: 800; color: var(--texto); }
+
+/* ---------- Inicio ---------- */
+.mapa-parcelas {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin-top: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #efe6c8;
+}
+.mapa-parcelas span { height: 52px; }
+.mapa-parcelas span:nth-child(5n+1) { background: #9fc48c; }
+.mapa-parcelas span:nth-child(5n+2) { background: #cdb684; }
+.mapa-parcelas span:nth-child(5n+3) { background: #6f9e5e; }
+.mapa-parcelas span:nth-child(5n+4) { background: #dcc993; }
+.mapa-parcelas span:nth-child(5n+5) { background: #a9c393; }
+.mapa-parcelas span:nth-child(7), .mapa-parcelas span:nth-child(14) { background: #6f9e5e; }
+.mapa-parcelas span:nth-child(8) { background: #e3d5a6; }
+.mapa-marcador {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -60%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.mapa-marcador b {
+  width: 44px; height: 44px; border-radius: 50%; background: #fff;
+  display: grid; place-items: center; font-size: 1.3rem; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.mapa-marcador small {
+  background: #fff; color: var(--texto); font-weight: 700; padding: 2px 8px; border-radius: 6px;
+}
+
+.boton-contorno {
+  width: 100%; padding: 14px; margin-top: 4px;
+  border: 2px solid var(--verde-oscuro); border-radius: 12px; background: #fff;
+  color: var(--verde-oscuro); font: inherit; font-size: 1.1rem; font-weight: 800; cursor: pointer;
+}
+
+.cuadricula { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tarjeta-zona {
+  border: 1px solid var(--linea); border-radius: 14px; padding: 12px 14px;
+  background: var(--fondo-suave); cursor: pointer;
+}
+.tarjeta-zona p { margin: 0; }
+.tarjeta-zona-titulo { font-size: .9rem; color: var(--texto); margin-bottom: 6px !important; }
+.tarjeta-zona-nombre { font-size: 1.45rem; font-weight: 800; line-height: 1.15; margin-bottom: 6px !important; }
+.tarjeta-zona-descripcion { font-size: .9rem; color: var(--texto); }
+.tarjeta-zona-aviso { font-size: .8rem; font-weight: 700; margin-top: 6px !important; }
+.tarjeta-zona-detalle { font-size: .78rem; color: var(--texto-suave); margin-top: 8px !important; }
+.tarjeta-zona.cargando .tarjeta-zona-descripcion,
+.tarjeta-zona.sin-dato .tarjeta-zona-descripcion { color: var(--texto-suave); font-style: italic; }
+
+.tarjeta-zona.bueno { background: var(--verde-claro); border-color: var(--verde-borde); }
+.tarjeta-zona.bueno .tarjeta-zona-nombre { color: var(--verde-oscuro); }
+.tarjeta-zona.alerta { background: var(--amarillo-claro); border-color: var(--amarillo-borde); }
+.tarjeta-zona.alerta .tarjeta-zona-nombre { color: var(--amarillo-texto); }
+.tarjeta-zona.peligro { background: var(--rojo-claro); border-color: var(--rojo-borde); }
+.tarjeta-zona.peligro .tarjeta-zona-nombre { color: var(--rojo-texto); }
+.tarjeta-zona.agua { background: var(--azul-claro); border-color: #b9d3ec; }
+.tarjeta-zona.agua .tarjeta-zona-nombre { color: var(--azul-texto); }
