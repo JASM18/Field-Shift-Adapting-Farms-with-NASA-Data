@@ -27,7 +27,7 @@ def pronostico_diario(lat, lon):
         "past_days": 7,
         "forecast_days": 16,
         "timezone": "auto",
-    })["daily"]
+    }, intentos=2, tiempo=(10, 30))["daily"]
 
     CARPETA_CACHE.mkdir(exist_ok=True)
     archivo.write_text(json.dumps(datos))
@@ -53,7 +53,7 @@ def pronostico_estacional(lat, lon):
         "longitude": lon,
         "daily": ",".join(variables),
         "forecast_days": 183,
-    })["daily"]
+    }, intentos=2, tiempo=(10, 30))["daily"]
 
     datos = {"time": diario["time"], "miembros": {
         v: [serie for clave, serie in diario.items() if clave == v or clave.startswith(v + "_member")]

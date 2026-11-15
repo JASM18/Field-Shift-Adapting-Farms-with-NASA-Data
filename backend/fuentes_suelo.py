@@ -32,7 +32,7 @@ def propiedades_suelo(lat, lon):
         params = [("lat", lat), ("lon", lon), ("value", "mean")]
         params += [("property", p) for p in ("clay", "sand", "silt", "phh2o", "soc")]
         params += [("depth", d) for d in ("0-5cm", "5-15cm", "15-30cm")]
-        capas = pedir_json("https://rest.isric.org/soilgrids/v2.0/properties/query", params)
+        capas = pedir_json("https://rest.isric.org/soilgrids/v2.0/properties/query", params, intentos=2, tiempo=(10, 30))
         grosor = {"0-5cm": 5, "5-15cm": 10, "15-30cm": 15}  # para promediar según el grosor de cada capa
         resultado = {}
         for capa in capas["properties"]["layers"]:
@@ -58,7 +58,8 @@ def relieve(lat, lon, distancia_m=90):
         d_lon = distancia_m / (111_320 * math.cos(math.radians(lat)))
         puntos = [(lat, lon), (lat + d_lat, lon), (lat - d_lat, lon), (lat, lon + d_lon), (lat, lon - d_lon)]
         respuesta = pedir_json("https://api.opentopodata.org/v1/srtm30m",
-                               {"locations": "|".join(f"{a:.5f},{b:.5f}" for a, b in puntos)})
+                               {"locations": "|".join(f"{a:.5f},{b:.5f}" for a, b in puntos)},
+                               intentos=2, tiempo=(10, 30))
         centro, norte, sur, este, oeste = (r["elevation"] for r in respuesta["results"])
         if None in (centro, norte, sur, este, oeste):
             return {"altura_m": centro, "pendiente_pct": None}

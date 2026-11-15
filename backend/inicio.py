@@ -62,7 +62,8 @@ def tarjeta_lluvia(historico, reciente_power, pronostico):
 
     proximos = sum(v or 0 for t, v in abierto.items() if t > f"{hoy:%Y-%m-%d}")
     detalle = (f"{lluvia_mes:.0f} mm so far in {MESES[hoy.month - 1]} (normal: {normal:.0f} mm). "
-               f"Forecast for the next 16 days: {proximos:.0f} mm.")
+               + ("Forecast unavailable right now." if pronostico.get("respaldo_nasa")
+                  else f"Forecast for the next 16 days: {proximos:.0f} mm."))
 
     if normal < LLUVIA_CASI_NADA_MM:
         # En temporada seca, solo decimos "más" si llovió al menos el doble de lo normal
@@ -102,6 +103,9 @@ def tarjeta_temperatura(historico_tmax, pronostico):
     fechas = {(hoy + timedelta(days=d)).isoformat() for d in range(-DIAS_ATRAS, DIAS_ADELANTE + 1)}
     maximas = [v for t, v in zip(pronostico["time"], pronostico["temperature_2m_max"])
                if t in fechas and v is not None]
+    if not maximas:  # sin pronóstico: los últimos 7 días medidos (NASA POWER)
+        maximas = [v for t, v in zip(pronostico["time"], pronostico["temperature_2m_max"])
+                   if t <= hoy.isoformat() and v is not None][-7:]
     actual = mean(maximas)
 
     # Máxima normal para estas fechas (30 años, ± VENTANA_NORMAL días)

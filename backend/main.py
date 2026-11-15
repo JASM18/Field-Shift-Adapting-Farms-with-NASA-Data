@@ -186,19 +186,37 @@ def api_inicio_humedad(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=
         "NASA POWER did not respond.")
 
 
+def _pronostico_o_nasa(lat, lon):
+    """Pronóstico de Open-Meteo; si no responde (p. ej. limita las IP de servidores en la nube),
+    se usan los últimos días medidos por NASA POWER (sin pronóstico)."""
+    try:
+        return pronostico_diario(lat, lon)
+    except requests.RequestException:
+        reciente = datos_recientes(lat, lon)
+        fechas = sorted(reciente["T2M_MAX"])
+        valor = lambda serie, f: None if reciente[serie].get(f, -999) == -999 else reciente[serie][f]
+        return {
+            "time": [f"{f[:4]}-{f[4:6]}-{f[6:]}" for f in fechas],
+            "temperature_2m_max": [valor("T2M_MAX", f) for f in fechas],
+            "temperature_2m_min": [None for _ in fechas],
+            "precipitation_sum": [valor("PRECTOTCORR", f) for f in fechas],
+            "respaldo_nasa": True,
+        }
+
+
 @app.get("/api/inicio/lluvia")
 def api_inicio_lluvia(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
     return _tarjeta(lambda: inicio.tarjeta_lluvia(
         clima_diario_historico(lat, lon)["PRECTOTCORR"],
         datos_recientes(lat, lon)["PRECTOTCORR"],
-        pronostico_diario(lat, lon)),
+        _pronostico_o_nasa(lat, lon)),
         "Could not fetch rainfall data.")
 
 
 @app.get("/api/inicio/temperatura")
 def api_inicio_temperatura(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180, le=180)):
     return _tarjeta(lambda: inicio.tarjeta_temperatura(
-        clima_diario_historico(lat, lon)["T2M_MAX"], pronostico_diario(lat, lon)),
+        clima_diario_historico(lat, lon)["T2M_MAX"], _pronostico_o_nasa(lat, lon)),
         "Could not fetch temperature data.")
 
 
