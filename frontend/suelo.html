@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Así es tu suelo · Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla fondo-suave">
+    <header class="encabezado">
+      <a class="volver" href="index.html">Inicio</a>
+      <h1>Así es tu suelo</h1>
+      <p>Explicado sin gráficas</p>
+    </header>
+
+    <main>
+      <div id="estado" class="estado">Consultando datos de tu suelo…</div>
+      <div id="tarjetas"></div>
+
+      <p class="fuente">ⓘ Estimación con datos satelitales para tu zona, no para tu parcela exacta.
+        Para decidir cuánto fertilizante usar, un análisis de laboratorio es más preciso.<br>
+        Fuentes: NASA POWER (humedad), SoilGrids – ISRIC (tierra, materia orgánica y pH),
+        NASA SRTM (relieve).</p>
+    </main>
+  </div>
+
+  <script type="module" src="js/suelo.js"></script>
+</body>
+</html>

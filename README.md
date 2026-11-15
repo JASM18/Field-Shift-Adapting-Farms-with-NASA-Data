@@ -29,9 +29,12 @@ backend/            Servidor en Python (FastAPI)
   red.py            Conexión compartida (IPv4 + reintentos)
   nasa_power.py     NASA POWER: clima diario de 30 años (se guarda en backend/cache/)
   clima.py          Resumen "El clima de tu zona" (reglas ajustables arriba del archivo)
+  fuentes_suelo.py  SoilGrids y SRTM (datos fijos, se guardan una vez por punto)
+  suelo.py          Pantalla "Así es tu suelo" (reglas ajustables)
 frontend/           Páginas (HTML/CSS/JS)
   index.html        Inicio
   clima.html        El clima de tu zona
+  suelo.html        Así es tu suelo
   css/estilos.css   Estilos basados en el diseño (docs/diseno/)
   js/               Código de cada pantalla
 docs/               Notas, evaluación de datasets, diseño
@@ -46,7 +49,7 @@ pruebas/            Scripts de prueba de APIs
 | Inicio | NASA POWER, Open-Meteo, MODIS | 🟡 Solo menú |
 | ¿Qué puedo sembrar? | Catálogo de cultivos + clima + Open-Meteo | ⏳ Falta catálogo |
 | Planear mis próximos ciclos | Reglas de rotación | ⏳ Falta catálogo |
-| Mi suelo | SoilGrids, SRTM, NASA POWER | ⏳ |
+| Mi suelo | SoilGrids, SRTM, NASA POWER | ✅ Funciona |
 | ¿Me alcanza el agua? | NASA POWER + FAO-56 | ⏳ |
 
 ## Datos

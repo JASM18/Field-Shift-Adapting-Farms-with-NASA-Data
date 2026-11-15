@@ -5,6 +5,7 @@
   solo se le pide a la NASA la primera vez para cada zona.
 """
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 from backend.red import pedir_json
@@ -39,6 +40,53 @@ def clima_diario_historico(lat, lon):
         "end": f"{AÑO_FIN}1231",
         "format": "JSON",
     })["properties"]["parameter"]
+
+    CARPETA_CACHE.mkdir(exist_ok=True)
+    archivo.write_text(json.dumps(datos))
+    return datos
+
+
+def humedad_suelo_historica(lat, lon):
+    """Humedad del suelo en la zona de raíces (GWETROOT, 0 = seca, 1 = saturada),
+    día por día, de los últimos 30 años. Sirve para saber qué es "normal" en cada época."""
+    lat, lon = round(lat, 1), round(lon, 1)
+    archivo = CARPETA_CACHE / f"power_humedad_{lat}_{lon}_{AÑO_INICIO}_{AÑO_FIN}.json"
+    if archivo.exists():
+        return json.loads(archivo.read_text())
+
+    datos = pedir_json(URL_DIARIO, {
+        "parameters": "GWETROOT",
+        "community": "AG",
+        "latitude": lat,
+        "longitude": lon,
+        "start": f"{AÑO_INICIO}0101",
+        "end": f"{AÑO_FIN}1231",
+        "format": "JSON",
+    })["properties"]["parameter"]["GWETROOT"]
+
+    CARPETA_CACHE.mkdir(exist_ok=True)
+    archivo.write_text(json.dumps(datos))
+    return datos
+
+
+def humedad_suelo_reciente(lat, lon, dias=45):
+    """Humedad del suelo de los últimos días. NASA POWER tiene ~3 días de retraso,
+    así que los más recientes vienen vacíos (-999). Se guarda un archivo por día."""
+    hoy = date.today()
+    lat, lon = round(lat, 1), round(lon, 1)
+    archivo = CARPETA_CACHE / f"power_humedad_reciente_{lat}_{lon}_{hoy:%Y%m%d}.json"
+    if archivo.exists():
+        return json.loads(archivo.read_text())
+
+    datos = pedir_json(URL_DIARIO, {
+        "parameters": "GWETROOT",
+        "community": "AG",
+        "latitude": lat,
+        "longitude": lon,
+        "start": f"{hoy - timedelta(days=dias):%Y%m%d}",
+        "end": f"{hoy:%Y%m%d}",
+        "format": "JSON",
+    })["properties"]["parameter"]["GWETROOT"]
 
     CARPETA_CACHE.mkdir(exist_ok=True)
     archivo.write_text(json.dumps(datos))

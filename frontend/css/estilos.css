@@ -111,3 +111,32 @@ h2 { font-size: 1.35rem; font-weight: 800; margin: 24px 0 4px; }
 .menu .deshabilitado { opacity: .45; }
 
 .fuente { margin-top: 24px; font-size: .8rem; color: var(--texto-suave); }
+
+/* ---------- Tarjetas (Mi suelo) ---------- */
+.fondo-suave { background: var(--fondo-suave); }
+.tarjeta {
+  background: var(--fondo);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.tarjeta p { margin: 0 0 8px; }
+.tarjeta-pregunta { color: var(--texto-suave); }
+.tarjeta-respuesta { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px !important; }
+.tarjeta-respuesta.alerta { color: var(--amarillo-texto); }
+.tarjeta-respuesta.bueno { color: var(--verde-oscuro); }
+.tarjeta-respuesta.agua { color: var(--azul-texto); }
+.tarjeta-detalle { font-size: .8rem; color: var(--texto-suave); margin-top: 8px !important; }
+.tarjeta-sin-dato { color: var(--texto-suave); font-style: italic; }
+
+.escala { display: flex; gap: 6px; margin: 4px 0 12px; }
+.escala-paso { flex: 1; text-align: center; font-size: .8rem; color: var(--texto-suave); }
+.escala-color { display: block; height: 12px; border-radius: 6px; margin-bottom: 6px; }
+.nivel-0 .escala-color { background: #e8d9b5; }
+.nivel-1 .escala-color { background: var(--amarillo); }
+.nivel-2 .escala-color { background: #d6e5d8; }
+.nivel-3 .escala-color { background: #b9d3ec; }
+.nivel-4 .escala-color { background: #8db4dd; }
+.escala-paso.actual .escala-color { height: 20px; margin-top: -4px; outline: 2px solid var(--texto); outline-offset: 1px; }
+.escala-paso.actual .escala-nombre { font-weight: 800; color: var(--texto); }
