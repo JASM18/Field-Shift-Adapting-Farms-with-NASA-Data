@@ -2,71 +2,54 @@
 
 **Reto:** *Field Shift: Adapting Farms with NASA Data*
 
-Herramienta de apoyo a la decisión que ayuda a agricultores a explorar **rotaciones de cultivo**
-que protejan la salud del suelo, ahorren agua y se adapten al clima cambiante, combinando
-observaciones de la NASA, datos de suelo, características de cultivos y **las prioridades del agricultor**.
-No reemplaza su criterio: explica *por qué* recomienda cada opción.
+**Pregunta de investigación:** ¿Cómo pueden los agricultores de regiones con climas extremos decidir qué
+sembrar, cuándo y cómo rotar sus cultivos para reducir pérdidas de cosecha por sequía y calor extremo?
 
-## Cómo correrlo
+Página web (pensada para celular) que ayuda a los agricultores a decidir con datos de la NASA.
+Empezamos con **Sonora**, pero el software funciona para cualquier ubicación.
+
+## Cómo correrla
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/streamlit run app.py
+DEV=1 .venv/bin/uvicorn backend.main:app --reload --timeout-graceful-shutdown 3 --host 0.0.0.0 --port 8000
 ```
 
-## Cómo funciona
-
-1. **Ubicación** → el agricultor marca su parcela en el mapa.
-2. **Clima (NASA POWER)** → temperatura, lluvia, humedad de suelo en raíces por mes y por temporada
-   (Primavera-Verano / Otoño-Invierno), más la tendencia 2001-2024.
-3. **Suelo (SoilGrids)** → pH, textura, carbono orgánico; editable con su análisis de laboratorio.
-4. **Prioridades** → ahorrar agua, salud del suelo, forraje, resistencia a calor/sequía; ¿tiene riego?
-5. **Resultado** → aptitud de cada cultivo por temporada (con razones y alertas) y las mejores
-   rotaciones, evaluadas con reglas agronómicas: no repetir familia, leguminosas después de cultivos
-   demandantes de nitrógeno, alternar profundidad de raíz, aportar biomasa.
+- En la computadora: http://localhost:8000
+- En el celular (mismo WiFi): `http://<IP de la computadora>:8000`
+- Con `DEV=1` la página se recarga sola cada vez que cambia un archivo.
+- Otra ubicación: `http://localhost:8000/?lat=29.07&lon=-110.95&nombre=Hermosillo`
 
 ## Estructura
 
 ```
-app.py               Interfaz (Streamlit)
-src/nasa_power.py    Cliente de la API NASA POWER (sin login)
-src/soil.py          Cliente de SoilGrids
-src/recommender.py   Aptitud de cultivos + búsqueda de rotaciones
-data/crops.json      Base de cultivos (⚠️ valores aproximados, validar)
-docs/                Notas, referencias, material de presentación
+backend/            Servidor en Python (FastAPI)
+  main.py           Rutas: /api/... (datos) y las páginas
+  red.py            Conexión compartida (IPv4 + reintentos)
+  nasa_power.py     NASA POWER: clima diario de 30 años (se guarda en backend/cache/)
+  clima.py          Resumen "El clima de tu zona" (reglas ajustables arriba del archivo)
+frontend/           Páginas (HTML/CSS/JS)
+  index.html        Inicio
+  clima.html        El clima de tu zona
+  css/estilos.css   Estilos basados en el diseño (docs/diseno/)
+  js/               Código de cada pantalla
+docs/               Notas, evaluación de datasets, diseño
+pruebas/            Scripts de prueba de APIs
 ```
 
-## Datos NASA y para qué sirven
+## Avance de pantallas
 
-| Dataset | Uso en el proyecto | Estado |
+| Pantalla | Datos | Estado |
 |---|---|---|
-| **NASA POWER** | Clima mensual, temporadas, tendencia | ✅ Integrado (API sin login) |
-| **GPM (IMERG)** | Lluvia más detallada / eventos extremos | 💡 Siguiente |
-| **SMAP** | Humedad de suelo real (no está en la lista, pero es clave) | 💡 Siguiente |
-| **MODIS / Landsat (NDVI)** | Vigor de la vegetación, historial de la parcela | 💡 Siguiente |
-| **ECOSTRESS** | Estrés hídrico / evapotranspiración | 💡 Opcional |
-| **GRACE-FO** | Tendencia del agua subterránea (escasez) | 💡 Opcional (contexto regional) |
-| **SRTM** | Pendiente → riesgo de erosión | 💡 Opcional |
+| El clima de tu zona | NASA POWER | ✅ Funciona |
+| Inicio | NASA POWER, Open-Meteo, MODIS | 🟡 Solo menú |
+| ¿Qué puedo sembrar? | Catálogo de cultivos + clima + Open-Meteo | ⏳ Falta catálogo |
+| Planear mis próximos ciclos | Reglas de rotación | ⏳ Falta catálogo |
+| Mi suelo | SoilGrids, SRTM, NASA POWER | ⏳ |
+| ¿Me alcanza el agua? | NASA POWER + FAO-56 | ⏳ |
 
-Para GPM, SMAP, MODIS, ECOSTRESS y GRACE se necesita cuenta en **NASA Earthdata**
-(https://urs.earthdata.nasa.gov/users/new) y la librería `earthaccess`.
+## Datos
 
-## Pendientes del equipo
-
-- [ ] Todos: crear cuenta en NASA Earthdata y Space Apps Connect
-- [ ] Subir este proyecto a GitHub y agregar al equipo
-- [ ] **Validar `data/crops.json`** con las referencias (SADER, manual de fertilización, guía de rotaciones, Best4Soil)
-- [ ] Redactar la problemática (1 párrafo) y el pitch
-- [ ] Integrar un dataset extra (sugerido: SMAP o NDVI de MODIS)
-- [ ] Mejorar textos para agricultores (lenguaje claro, quizá modo móvil)
-- [ ] Desplegar (Streamlit Community Cloud es gratis) y grabar video demo
-- [ ] Revisar la Guía de Envío de Proyectos (plazos)
-
-## Referencias agronómicas
-
-- Nutrientes por ciclo agrícola (SADER): https://www.gob.mx/agricultura/articulos/nutrientes-necesarios-para-cada-ciclo-agricola
-- Manual técnico de fertilización: https://www.agroecologia.net/wp-content/uploads/2019/01/manual_tec_fertilizacion_vd.pdf
-- Guía de asociaciones y rotaciones: https://www.madrid.es/UnidadesDescentralizadas/Educacion_Ambiental/ContenidosBasicos/Publicaciones/HuertoJardineria/Guia_Asociaciones_y_Rotaciones_cultivos.pdf
-- Ficha PAE rotación: https://pae.gencat.cat/web/.content/al_alimentacio/al01_pae/05_publicacions_material_referencia/arxius/FichaPAE22_Rotacion.pdf
-- Salud del suelo (Best4Soil): https://orgprints.org/id/eprint/43505/7/43505_Best4Soil_Soil-health-practical-information_ES.pdf
+Decisiones y evaluación en `docs/notas.md` y `docs/evaluacion-datasets.md`.
+Se usan: NASA POWER, MODIS (ORNL DAAC), SRTM, Open-Meteo, SoilGrids.

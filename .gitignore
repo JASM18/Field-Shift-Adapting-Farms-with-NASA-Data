@@ -221,3 +221,6 @@ __marimo__/
 .venv/
 *.pyc
 data/raw/
+
+# Caché de datos descargados
+backend/cache/

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field Shift</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="pantalla">
+    <header class="encabezado">
+      <p>Buenos días</p>
+      <h1>📍 Tu parcela · <span id="nombre-lugar"></span></h1>
+    </header>
+
+    <main>
+      <!-- Aquí irán las tarjetas de "¿Cómo está tu zona hoy?" -->
+
+      <h2>¿Qué quieres hacer?</h2>
+      <ul class="menu">
+        <li><a href="clima.html">
+          <span class="icono">☀️</span>
+          <span><strong>El clima de mi zona</strong><small>Qué meses son buenos y cuáles peligrosos</small></span>
+        </a></li>
+        <li><span class="deshabilitado">
+          <span class="icono">🌱</span>
+          <span><strong>¿Qué puedo sembrar?</strong><small>Próximamente</small></span>
+        </span></li>
+        <li><span class="deshabilitado">
+          <span class="icono">🔄</span>
+          <span><strong>Planear mis próximos ciclos</strong><small>Próximamente</small></span>
+        </span></li>
+        <li><span class="deshabilitado">
+          <span class="icono">🟫</span>
+          <span><strong>Mi suelo</strong><small>Próximamente</small></span>
+        </span></li>
+        <li><span class="deshabilitado">
+          <span class="icono">💧</span>
+          <span><strong>¿Me alcanza el agua?</strong><small>Próximamente</small></span>
+        </span></li>
+      </ul>
+    </main>
+  </div>
+
+  <script type="module">
+    import { UBICACION, conservarUbicacionEnEnlaces } from "./js/comun.js";
+    document.getElementById("nombre-lugar").textContent = UBICACION.nombre;
+    conservarUbicacionEnEnlaces();
+  </script>
+</body>
+</html>
